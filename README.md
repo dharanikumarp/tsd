@@ -1,0 +1,2 @@
+# tsd
+Toggle smell detector
