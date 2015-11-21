@@ -1,8 +1,14 @@
 package edu.concordia.tsd.smells.nestedtoggle;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
+import java.util.Set;
+
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.runtime.CoreException;
+
+import edu.concordia.tsd.smells.ToggleSmell;
+import edu.concordia.tsd.smells.ToggleSmellType;
+import edu.concordia.tsd.smells.detector.AbstractSmellDetector;
 
 /**
  * Identifies the cases of nested toggles in the source code.
@@ -10,31 +16,25 @@ import org.eclipse.cdt.core.model.ISourceRoot;
  * @author dharani kumar palani (d_palan@encs.concordia.ca)
  *
  */
-public class NestedToggleSmellDetector {
+public class NestedToggleSmellDetector extends AbstractSmellDetector {
 
-	private ICProject icProject;
-	private String toggleMethodName;
-
-	public NestedToggleSmellDetector(ICProject icProject, final String toggleMethodName) {
-		this.icProject = icProject;
-		this.toggleMethodName = toggleMethodName;
+	@Override
+	public ToggleSmellType getDetectorType() {
+		return ToggleSmellType.NESTED_TOGGLE;
 	}
 
-	private void detectSmells() {
-
-		ISourceRoot[] allSourceRoots = null;
+	/**
+	 * @override
+	 */
+	protected void scanTranslationUnit(ITranslationUnit tu) {
 		try {
-			allSourceRoots = icProject.getAllSourceRoots();
-			System.out.println("allSourceRoots " + allSourceRoots.length);
-
-			for (ISourceRoot iSourceRoot : allSourceRoots) {
-
-			}
-			
-			
-		} catch (CModelException e) {
+			IASTTranslationUnit astTU = tu.getAST();
+			NestedFunctionCallExprVisitor visitor = new NestedFunctionCallExprVisitor(tu, toggleMethodName);
+			astTU.accept(visitor);
+			Set<ToggleSmell> smells = visitor.getSmells();
+			toggleSmells.addAll(smells);
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

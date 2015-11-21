@@ -11,20 +11,9 @@ import java.util.Set;
  */
 public class ToggleSmell {
 
-	enum ToggleSmellType {
-		NESTED_TOGGLE,
-
-		DEAD_TOGGLE,
-
-		SPREAD_TOGGLE,
-
-		SPAGHETTI_TOGGLE,
-
-		COMBINATORIAL_TOGGLE;
-	}
-
 	private ToggleSmellType smellType;
 	private String fileName;
+	
 	// Can hold multiple locations in a single file. Stores line numbers
 	private Set<Integer> locations;
 
@@ -41,7 +30,7 @@ public class ToggleSmell {
 	public void addLocation(int location) {
 		locations.add(location);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

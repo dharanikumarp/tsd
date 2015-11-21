@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.runtime.CoreException;
+
+import edu.concordia.tsd.smells.ToggleSmellType;
+import edu.concordia.tsd.smells.detector.AbstractSmellDetector;
 
 /**
  * This smell detector class will detects spread of toggles among classes.
@@ -15,34 +17,25 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @author dharani kumar palani (d_palan@encs.concordia.ca)
  *
  */
-public class ToggleSpreadSmellDetector {
-
-	private ICProject icProject;
-	private ISourceRoot allSourceRoots;
+public class ToggleSpreadSmellDetector extends AbstractSmellDetector {
 
 	// Map of string toggle names or toggle reference constants versus of List
 	// of ITranslationUnits
 	private Map<String, List<ITranslationUnit>> toggleSpreadMap = new HashMap<String, List<ITranslationUnit>>();
 
-	public ToggleSpreadSmellDetector(ICProject icProject) throws CModelException {
-		this.icProject = icProject;
-		ISourceRoot[] allSourceRoots = icProject.getAllSourceRoots();
+	@Override
+	public ToggleSmellType getDetectorType() {
+		return ToggleSmellType.SPREAD_TOGGLE;
 	}
 
-	private void scanSourceRoot(ISourceRoot sourceRoot) {
+	@Override
+	protected void scanTranslationUnit(ITranslationUnit tu) {
 		try {
-			ITranslationUnit[] units = sourceRoot.getTranslationUnits();
+			IASTTranslationUnit astTU = tu.getAST();
+			
+			
+		} catch (CoreException e) {
 
-			for (ITranslationUnit iTranslationUnit : units) {
-				scanTranslationUnit(iTranslationUnit);
-			}
-
-		} catch (CModelException e) {
-			e.printStackTrace();
 		}
-
-	}
-
-	private void scanTranslationUnit(ITranslationUnit unit) {
 	}
 }
