@@ -32,7 +32,7 @@ public class NestedFunctionCallExprVisitor extends ASTVisitor {
 		this.tu = tu;
 		this.toggleMethodName = toggleMethodName;
 		shouldVisitStatements = true;
-		shouldVisitExpressions = true;
+		//shouldVisitExpressions = true;
 	}
 
 	@Override

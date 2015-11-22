@@ -24,9 +24,13 @@ public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 	protected ICProject icProject;
 	protected String toggleMethodName;
 
-	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName, List<String> deadToggleFlags) {
+	protected List<String> deadToggles;
+
+	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName,
+			List<String> deadToggleFlags) {
 		this.icProject = icProject;
 		this.toggleMethodName = methodName;
+		this.deadToggles = deadToggleFlags;
 		detectSmells();
 		return toggleSmells;
 	}

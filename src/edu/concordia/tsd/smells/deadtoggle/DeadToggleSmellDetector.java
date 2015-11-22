@@ -18,5 +18,6 @@ public class DeadToggleSmellDetector extends AbstractSmellDetector {
 
 	@Override
 	protected void scanTranslationUnit(ITranslationUnit tu) {
+		
 	}
 }
