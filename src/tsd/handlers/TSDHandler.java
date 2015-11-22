@@ -18,8 +18,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import edu.concordia.tsd.smells.ToggleSmell;
-import edu.concordia.tsd.smells.detector.ToggleSmellDetector;
+import edu.concordia.tsd.smells.detector.IToggleSmellDetector;
 import edu.concordia.tsd.smells.nestedtoggle.NestedToggleSmellDetector;
+import edu.concordia.tsd.smells.spreadtoggle.ToggleSpreadSmellDetector;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -63,17 +64,17 @@ public class TSDHandler extends AbstractHandler {
 		ICProject[] allProjects;
 		try {
 			allProjects = CoreModel.getDefault().getCModel().getCProjects();
-			ToggleSmellDetector[] sds = new ToggleSmellDetector[] { new NestedToggleSmellDetector() };
+			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(), new ToggleSpreadSmellDetector() };
 
 			for (ICProject icProject : allProjects) {
 				System.out.println("icProject " + icProject.getElementName());
 
 				if (selectedProject.toString().contains(icProject.getElementName())) {
 
-					for (ToggleSmellDetector smellDetector : sds) {
+					for (IToggleSmellDetector smellDetector : sds) {
 
 						Set<ToggleSmell> allDetectedSmells = smellDetector.getToggleSmells(icProject,
-								TOGGLE_METHOD_NAME);
+								TOGGLE_METHOD_NAME, null);
 						System.out.println("Smell Detector type " + smellDetector.getDetectorType());
 						for (ToggleSmell toggleSmell : allDetectedSmells) {
 							System.out.println(toggleSmell);

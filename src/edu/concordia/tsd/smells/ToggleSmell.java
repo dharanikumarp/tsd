@@ -13,7 +13,6 @@ public class ToggleSmell {
 
 	private ToggleSmellType smellType;
 	private String fileName;
-	
 	// Can hold multiple locations in a single file. Stores line numbers
 	private Set<Integer> locations;
 

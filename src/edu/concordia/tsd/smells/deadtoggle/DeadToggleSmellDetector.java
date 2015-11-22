@@ -1,29 +1,22 @@
 package edu.concordia.tsd.smells.deadtoggle;
 
-import java.util.List;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
-import org.eclipse.cdt.core.model.ICProject;
+import edu.concordia.tsd.smells.ToggleSmellType;
+import edu.concordia.tsd.smells.detector.AbstractSmellDetector;
 
 /**
  * @author dharani kumar palani (d_palan@encs.concordia.ca)
  *
  */
-public class DeadToggleSmellDetector {
+public class DeadToggleSmellDetector extends AbstractSmellDetector {
 
-	private ICProject project;
-	private List<String> deadToggles;
-
-	public DeadToggleSmellDetector(ICProject project, List<String> deadToggles) {
-		this.project = project;
-		this.deadToggles = deadToggles;
+	@Override
+	public ToggleSmellType getDetectorType() {
+		return ToggleSmellType.DEAD_TOGGLE;
 	}
 
-	private void scanTranslationUnit() {
-		
-		
-	}
-
-	public void detectSmells() {
-
+	@Override
+	protected void scanTranslationUnit(ITranslationUnit tu) {
 	}
 }

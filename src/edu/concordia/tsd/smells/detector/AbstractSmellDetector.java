@@ -4,6 +4,7 @@
 package edu.concordia.tsd.smells.detector;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -17,13 +18,13 @@ import edu.concordia.tsd.smells.ToggleSmell;
  * @author dharani kumar palan(d_palan@encs.concordia.ca)
  *
  */
-public abstract class AbstractSmellDetector implements ToggleSmellDetector {
+public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 
 	protected Set<ToggleSmell> toggleSmells = new HashSet<ToggleSmell>();
 	protected ICProject icProject;
 	protected String toggleMethodName;
 
-	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName) {
+	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName, List<String> deadToggleFlags) {
 		this.icProject = icProject;
 		this.toggleMethodName = methodName;
 		detectSmells();
