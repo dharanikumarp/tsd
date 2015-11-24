@@ -1,6 +1,6 @@
 package tsd.handlers;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -65,12 +65,12 @@ public class TSDHandler extends AbstractHandler {
 
 		ICProject[] allProjects;
 		try {
-			
-			List<String> deadToggleFlags = loadDeadToggleFlags(); 
-			
+
+			Set<String> deadToggleFlags = loadDeadToggleFlags();
+
 			allProjects = CoreModel.getDefault().getCModel().getCProjects();
-			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(), new ToggleSpreadSmellDetector()};
-			//new NestedToggleSmellDetector(), , new DeadToggleSmellDetector() };
+			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(),
+					new ToggleSpreadSmellDetector(), new DeadToggleSmellDetector() };
 
 			for (ICProject icProject : allProjects) {
 				System.out.println("icProject " + icProject.getElementName());
@@ -115,16 +115,23 @@ public class TSDHandler extends AbstractHandler {
 		System.out.println(fileLoc.getFileName() + " at offset " + fileLoc.getNodeOffset() + ", "
 				+ fileLoc.getStartingLineNumber());
 	}
-	
+
 	private void printLines() {
-		for(int i = 0; i < LINE_LENGTH; i++) {
+		for (int i = 0; i < LINE_LENGTH; i++) {
 			System.out.print("=");
 		}
 	}
-	
-	private List<String> loadDeadToggleFlags() {
-		//TODO Sumit
-		return null;
+
+	private Set<String> loadDeadToggleFlags() {
+		Set<String> deadToggles = new HashSet<String>();
+		deadToggles.add("--no-message-box");
+		deadToggles.add("--enable-threaded-compositing");
+		deadToggles.add("--disable-genius-app");
+		deadToggles.add("--safebrowsing-disable-auto-update");
+		deadToggles.add("--password-store");
+		deadToggles.add("--start-maximized");
+
+		return deadToggles;
 	}
 
 }

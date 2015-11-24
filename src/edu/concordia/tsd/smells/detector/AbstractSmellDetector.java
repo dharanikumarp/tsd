@@ -21,27 +21,27 @@ import edu.concordia.tsd.smells.ToggleSmell;
 public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 
 	/**
-	 * @uml.property  name="toggleSmells"
-	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="edu.concordia.tsd.smells.ToggleSmell"
+	 * @uml.property name="toggleSmells"
+	 * @uml.associationEnd multiplicity="(0 -1)"
+	 *                     elementType="edu.concordia.tsd.smells.ToggleSmell"
 	 */
 	protected Set<ToggleSmell> toggleSmells = new HashSet<ToggleSmell>();
 	/**
-	 * @uml.property  name="icProject"
-	 * @uml.associationEnd  
+	 * @uml.property name="icProject"
+	 * @uml.associationEnd
 	 */
 	protected ICProject icProject;
 	/**
-	 * @uml.property  name="toggleMethodName"
+	 * @uml.property name="toggleMethodName"
 	 */
 	protected String toggleMethodName;
 
 	/**
-	 * @uml.property  name="deadToggles"
+	 * @uml.property name="deadToggles"
 	 */
-	protected List<String> deadToggles;
+	protected Set<String> deadToggles;
 
-	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName,
-			List<String> deadToggleFlags) {
+	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName, Set<String> deadToggleFlags) {
 		this.icProject = icProject;
 		this.toggleMethodName = methodName;
 		this.deadToggles = deadToggleFlags;
