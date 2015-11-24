@@ -1,6 +1,5 @@
 package edu.concordia.tsd.smells;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,30 +10,27 @@ import java.util.Set;
  */
 public class ToggleSmell {
 
+	/**
+	 * @uml.property  name="smellType"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	private ToggleSmellType smellType;
-	private String fileName;
-	// Can hold multiple locations in a single file. Stores line numbers
-	private Set<Integer> locations;
+	/**
+	 * @uml.property  name="toggleContexts"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="edu.concordia.tsd.smells.ToggleContext"
+	 */
+	private Set<ToggleContext> toggleContexts;
 
-	public ToggleSmell(final ToggleSmellType smellType, final String fileName) {
-		this(smellType, fileName, new HashSet<Integer>());
-	}
-
-	public ToggleSmell(final ToggleSmellType smellType, final String fileName, Set<Integer> locations) {
+	public ToggleSmell(final ToggleSmellType smellType, final Set<ToggleContext> tcs) {
 		this.smellType = smellType;
-		this.fileName = fileName;
-		this.locations = locations;
-	}
-
-	public void addLocation(int location) {
-		locations.add(location);
+		this.toggleContexts = tcs;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ToggleSmell [smellType=").append(smellType).append(", fileName=").append(fileName)
-				.append(", locations=").append(locations).append("]");
+		builder.append("ToggleSmell [smellType=").append(smellType).append(", toggleContexts=").append(toggleContexts)
+				.append("]");
 		return builder.toString();
 	}
 }

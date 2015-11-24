@@ -69,7 +69,8 @@ public class TSDHandler extends AbstractHandler {
 			List<String> deadToggleFlags = loadDeadToggleFlags(); 
 			
 			allProjects = CoreModel.getDefault().getCModel().getCProjects();
-			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(), new ToggleSpreadSmellDetector(), new DeadToggleSmellDetector() };
+			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(), new ToggleSpreadSmellDetector()};
+			//new NestedToggleSmellDetector(), , new DeadToggleSmellDetector() };
 
 			for (ICProject icProject : allProjects) {
 				System.out.println("icProject " + icProject.getElementName());

@@ -9,10 +9,14 @@ import edu.concordia.tsd.smells.ToggleSmell;
 import edu.concordia.tsd.smells.ToggleSmellType;
 
 /**
- * @author dharani kumar palani (d_palan@encs.concordia.ca)
+ * @author  dharani kumar palani (d_palan@encs.concordia.ca)
  */
 public interface IToggleSmellDetector {
 
+	/**
+	 * @uml.property  name="detectorType"
+	 * @uml.associationEnd  
+	 */
 	public ToggleSmellType getDetectorType();
 
 	/**

@@ -20,10 +20,24 @@ import edu.concordia.tsd.smells.ToggleSmell;
  */
 public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 
+	/**
+	 * @uml.property  name="toggleSmells"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="edu.concordia.tsd.smells.ToggleSmell"
+	 */
 	protected Set<ToggleSmell> toggleSmells = new HashSet<ToggleSmell>();
+	/**
+	 * @uml.property  name="icProject"
+	 * @uml.associationEnd  
+	 */
 	protected ICProject icProject;
+	/**
+	 * @uml.property  name="toggleMethodName"
+	 */
 	protected String toggleMethodName;
 
+	/**
+	 * @uml.property  name="deadToggles"
+	 */
 	protected List<String> deadToggles;
 
 	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName,
@@ -35,12 +49,10 @@ public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 		return toggleSmells;
 	}
 
-	private void detectSmells() {
+	protected void detectSmells() {
 		ISourceRoot[] allSourceRoots = null;
 		try {
 			allSourceRoots = icProject.getAllSourceRoots();
-			System.out.println("allSourceRoots " + allSourceRoots.length);
-
 			for (ISourceRoot iSourceRoot : allSourceRoots) {
 				ITranslationUnit[] allTU = iSourceRoot.getTranslationUnits();
 
