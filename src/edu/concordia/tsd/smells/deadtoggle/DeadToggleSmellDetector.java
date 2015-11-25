@@ -71,7 +71,7 @@ public class DeadToggleSmellDetector extends AbstractSmellDetector {
 					IASTExpression expr = unaryExpr.getOperand();
 
 					if (expr.getRawSignature().contains(toggleMethodName)) {
-						fcexpr = (IASTFunctionCallExpression) conditionalExpr;
+						fcexpr = (IASTFunctionCallExpression) expr;
 					}
 				}
 
