@@ -1,3 +1,9 @@
+paper/*.aux
+paper/*.log
+paper/*.gz
+paper/*.blg
+paper/*.bbl
+
 *.class
 
 # Mobile Tools for Java (J2ME)
