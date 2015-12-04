@@ -1,4 +1,4 @@
-package edu.concordia.tsd.util;
+package edu.concordia.tsd.smells.deadtoggle;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

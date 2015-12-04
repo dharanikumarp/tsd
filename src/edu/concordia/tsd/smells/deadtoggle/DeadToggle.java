@@ -1,4 +1,4 @@
-package edu.concordia.tsd.util;
+package edu.concordia.tsd.smells.deadtoggle;
 
 public class DeadToggle {
 	
