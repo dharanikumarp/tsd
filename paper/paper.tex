@@ -31,8 +31,8 @@ coupling and lack of cohesion. We classified the smells caused by toggles
 in six different patterns Dead Toggles, Tested Toggles, Spaghetti Toggles, 
 Mix of Compile-Time and Runtime Toggles, Legacy toggles and Spread Toggles. 
 We used AST parser tool as an eclipse plug-in to identify these toggle 
-smells in major modules of Google Chrome source code. We found that TODO 
-nested toggles smells, TODO spaghetti toggles and TODO spread toggles in ``chrome'' and ``base'' modules of Google Chrome.
+smells in major modules of Google Chrome source code. We found TODO 
+nested toggles smells, TODO spaghetti toggles and TODO spread toggles in ``chrome'' and ``base'' modules of Google Chrome.\\
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -55,10 +55,58 @@ Partial Dead Code Elimination [2]The paper presents an algorithm to eliminate pa
 
 \section{Study Setup}
 \label{study-setup}
-In order to explore the feature toggle related smell we have searched for open source projects and found some projects with feature toggle implemented in those project.But we have choose Google Chome as our main code base because it has more then 5 years active development life cycle with feature toggle in it and it is released frequently.So there might be any issue with feature toggle which might not maintain properly.
+For this study we downloaded Google Chrome open source project from the git repository. It has more then 5 years of active development life cycle 
+managing their features using feature toggles. 
+
 \section{Case Study}
+We classified toggle smells in different classes based on their usage in 
+the source code. Before that we studied different types of feature toggles 
+available in Google Chrome.
+
+\subsection{Compile Time toggles}
+The first set of usage patterns we descriptively belongs to the compile 
+time toggles. Here changing the toggle value requires modifying the source 
+code and generating a new binary to enable or disable a particular feature 
+for testing or release. The usage also relies upon the support in the 
+programming language for managing enumerations. 
+
+Even though the patterns are not complex, they are subtle for small projects (like capstone or startups) in order to manage feature dependencies and 
+avoid feature branching. Another benefit of compile time toggles is, when 
+cleaning up the toggle code at the end of toggle life. The location of the 
+changes could be easily identified by commenting out the field containing the toggle flag.
+
+\subsection{Constants Variables}
+In this pattern the value of the toggle state of a feature is managed through a constant variable declared in the program. In languages like C/C++, const modifiers will be used to inform that state of the feature flags will not change throughout the lifetime of the program. In Java final modifiers will be used. The data type of the variable could be a boolean or integer.\\
+
+For example,  in Java, the constants could be declared in a final static class and used in all source files using static imports.\\
+
+public final class ToggleStates {
+    public static final boolean IS_FEATURE1_ENABLED = true;
+    public static final boolean IS_FEATURE2_ENABLED = true;
+    ... ...
+}
+
+\subsection{Enumerations Interface}
+In Java there is a support to manage set of states through “enum” interface which is much richer when compared to languages like C, C++ (C++11 has similar support). The enum can implement interfaces and provide some flexibility in defining the toggle API (Togglz framework uses this approach) to use rather than using the constant variables directly.\\
+
+public enum ToggleFlags
+{
+    FEATURE1(false),
+    FEATURE2(true),
+    FEATURE3(false);\\
+
+    private boolean state;
+    private ToggleFlags(boolean state) { this.state = state; }\\
+
+    public boolean isEnabled() { return this.state; }
+}\\
+
+The client code can directly use this \textit{enum} class method as below ``ToggleFlags.FEATURE1.isEnabled()'' which looks much cleaner in code when compared to accessing the values through constant variables.
+
+\subsection{Compile-Time Macros}
+
 \label{results}
-TODO: Answer the research questions
+TODO:
 
 \section{Code Smells}
 \label{discussion}
@@ -67,6 +115,7 @@ TODO
 \section{Results}
 \label{threats}
 TODO
+
 \subsection{Qualitative}
 TODO
 \subsection{Quantitative}
