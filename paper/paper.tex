@@ -14,13 +14,25 @@
 \begin{document}
 \title{Togglge Smell Detection in Google Chrome}
 \author{
-Md Tajmilur Rahman, Dharani Kumar, Sumir Sarkar, Omar Faruk Miah\\
+Md Tajmilur Rahman, Dharani Kumar, Sumit Sarkar, Omar Faruk\\
 Concordia University,~Montreal,~QC,~Canada
 }
 \maketitle
 
 \begin{abstract}
-TODO
+Identifying code smell is the first step to re-factor a software system. 
+In Google Chrome developers use feature toggles to control their features 
+and keep developing on a single trunk. This paper investigates code smell 
+caused by improper use of feature toggles in Google Chrome that we call 
+as toggle smell. Using feature toggles to hide/unhide features is an old 
+concept but recently being practised in many software companies. Improper 
+use of toggles might cause code smell including duplicate code, dead code, 
+coupling and lack of cohesion. We classified the smells caused by toggles 
+in six different patterns Dead Toggles, Tested Toggles, Spaghetti Toggles, 
+Mix of Compile-Time and Runtime Toggles, Legacy toggles and Spread Toggles. 
+We used AST parser tool as an eclipse plug-in to identify these toggle 
+smells in major modules of Google Chrome source code. We found that TODO 
+nested toggles smells, TODO spaghetti toggles and TODO spread toggles in ``chrome'' and ``base'' modules of Google Chrome.
 \end{abstract}
 
 \begin{IEEEkeywords}
