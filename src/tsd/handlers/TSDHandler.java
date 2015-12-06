@@ -79,12 +79,16 @@ public class TSDHandler extends AbstractHandler {
 
 					for (IToggleSmellDetector smellDetector : sds) {
 
+						long startTime = System.currentTimeMillis();
+
 						Set<ToggleSmell> allDetectedSmells = smellDetector.getToggleSmells(icProject,
 								TOGGLE_METHOD_NAME, deadToggleFlags);
 						System.out.println("Smell Detector type " + smellDetector.getDetectorType());
 						for (ToggleSmell toggleSmell : allDetectedSmells) {
 							System.out.println(toggleSmell);
 						}
+
+						System.out.println("Time taken " + (System.currentTimeMillis() - startTime) + "ms");
 
 					}
 				}
