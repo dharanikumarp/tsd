@@ -1,19 +1,13 @@
 package tsd.handlers;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -25,7 +19,7 @@ import edu.concordia.tsd.smells.nestedtoggle.NestedToggleSmellDetector;
 import edu.concordia.tsd.smells.spreadtoggle.ToggleSpreadSmellDetector;
 
 /**
- * Our sample handler extends AbstractHandler, an IHandler base class.
+ * Toggle Smell Detector handler extends AbstractHandler, an IHandler base class.
  * 
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
@@ -66,11 +60,9 @@ public class TSDHandler extends AbstractHandler {
 		ICProject[] allProjects;
 		try {
 
-			Set<String> deadToggleFlags = loadDeadToggleFlags();
-
 			allProjects = CoreModel.getDefault().getCModel().getCProjects();
-			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new NestedToggleSmellDetector(),
-					new ToggleSpreadSmellDetector(), new DeadToggleSmellDetector() };
+			IToggleSmellDetector[] sds = new IToggleSmellDetector[] { new ToggleSpreadSmellDetector(),
+					new NestedToggleSmellDetector(), new DeadToggleSmellDetector() };
 
 			for (ICProject icProject : allProjects) {
 				System.out.println("icProject " + icProject.getElementName());
@@ -82,7 +74,7 @@ public class TSDHandler extends AbstractHandler {
 						long startTime = System.currentTimeMillis();
 
 						Set<ToggleSmell> allDetectedSmells = smellDetector.getToggleSmells(icProject,
-								TOGGLE_METHOD_NAME, deadToggleFlags);
+								TOGGLE_METHOD_NAME);
 						System.out.println("Smell Detector type " + smellDetector.getDetectorType());
 						for (ToggleSmell toggleSmell : allDetectedSmells) {
 							System.out.println(toggleSmell);
@@ -100,42 +92,4 @@ public class TSDHandler extends AbstractHandler {
 		}
 		return null;
 	}
-
-	private void outputReferences(IIndex index, IBinding b) throws CoreException {
-		System.out.println("SampleHandler.outputReferences()");
-
-		IIndexName[] names = index.findReferences(b);
-
-		System.out.println("names " + names.length);
-
-		for (IIndexName n : names) {
-
-			outputReference(index, n);
-		}
-	}
-
-	private void outputReference(IIndex index, IIndexName n) throws CoreException {
-		IASTFileLocation fileLoc = n.getFileLocation();
-		System.out.println(fileLoc.getFileName() + " at offset " + fileLoc.getNodeOffset() + ", "
-				+ fileLoc.getStartingLineNumber());
-	}
-
-	private void printLines() {
-		for (int i = 0; i < LINE_LENGTH; i++) {
-			System.out.print("=");
-		}
-	}
-
-	private Set<String> loadDeadToggleFlags() {
-		Set<String> deadToggles = new HashSet<String>();
-		deadToggles.add("--no-message-box");
-		deadToggles.add("--enable-threaded-compositing");
-		deadToggles.add("--disable-genius-app");
-		deadToggles.add("--safebrowsing-disable-auto-update");
-		deadToggles.add("--password-store");
-		deadToggles.add("--start-maximized");
-
-		return deadToggles;
-	}
-
 }
