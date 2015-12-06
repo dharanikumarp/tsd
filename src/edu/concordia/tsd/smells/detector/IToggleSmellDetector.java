@@ -13,15 +13,23 @@ import edu.concordia.tsd.smells.ToggleSmellType;
 public interface IToggleSmellDetector {
 
 	/**
-	 * @uml.property name="detectorType"
-	 * @uml.associationEnd
+	 * Returns the smell detector type.
 	 */
 	public ToggleSmellType getDetectorType();
 
 	/**
+	 * @param project
+	 *            - the C++ project to scan
+	 * @param methodName
+	 *            - the toggle method name
 	 * @param deadToggleFlags
-	 *            TODO
+	 * 
 	 * @return the Set of detected toggle smells
 	 */
 	public Set<ToggleSmell> getToggleSmells(ICProject project, String methodName, Set<String> deadToggleFlags);
+
+	/**
+	 * Returns the number of files scanned by this detector.
+	 */
+	public long getNumFilesScanned();
 }

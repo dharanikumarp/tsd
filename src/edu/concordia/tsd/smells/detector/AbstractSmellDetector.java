@@ -1,13 +1,10 @@
-/**
- * 
- */
 package edu.concordia.tsd.smells.detector;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -20,26 +17,15 @@ import edu.concordia.tsd.smells.ToggleSmell;
  */
 public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 
-	/**
-	 * @uml.property name="toggleSmells"
-	 * @uml.associationEnd multiplicity="(0 -1)"
-	 *                     elementType="edu.concordia.tsd.smells.ToggleSmell"
-	 */
 	protected Set<ToggleSmell> toggleSmells = new HashSet<ToggleSmell>();
-	/**
-	 * @uml.property name="icProject"
-	 * @uml.associationEnd
-	 */
+
 	protected ICProject icProject;
-	/**
-	 * @uml.property name="toggleMethodName"
-	 */
+
 	protected String toggleMethodName;
 
-	/**
-	 * @uml.property name="deadToggles"
-	 */
 	protected Set<String> deadToggles;
+
+	private int numFiles = 0;
 
 	public Set<ToggleSmell> getToggleSmells(ICProject icProject, final String methodName, Set<String> deadToggleFlags) {
 		this.icProject = icProject;
@@ -52,12 +38,21 @@ public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 	protected void detectSmells() {
 		ISourceRoot[] allSourceRoots = null;
 		try {
+
 			allSourceRoots = icProject.getAllSourceRoots();
+
+			ICElement[] childrens = icProject.getChildren();
+
+			for (ICElement icElement : childrens) {
+				System.out.println("icElement " + icElement.getElementName());
+			}
+
 			for (ISourceRoot iSourceRoot : allSourceRoots) {
 				ITranslationUnit[] allTU = iSourceRoot.getTranslationUnits();
 
 				for (ITranslationUnit iTranslationUnit : allTU) {
 					if (iTranslationUnit.isCXXLanguage() && iTranslationUnit.isSourceUnit()) {
+						numFiles++;
 						scanTranslationUnit(iTranslationUnit);
 					}
 				}
@@ -65,6 +60,10 @@ public abstract class AbstractSmellDetector implements IToggleSmellDetector {
 		} catch (CModelException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public long getNumFilesScanned() {
+		return this.numFiles;
 	}
 
 	protected abstract void scanTranslationUnit(ITranslationUnit tu);
