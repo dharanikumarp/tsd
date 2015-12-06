@@ -86,12 +86,15 @@ public class DeadToggleSmellDetector extends AbstractSmellDetector {
 			IASTInitializerClause[] arguments = fcexpr.getArguments();
 			String argName = arguments[0].getRawSignature();
 
-			if (deadToggles.contains(argName)) {
-				Set<ToggleContext> set = new HashSet<ToggleContext>();
-				ToggleContext tc = new ToggleContext(argName);
-				tc.addFileAndLocation(fcexpr.getContainingFilename(), fcexpr.getFileLocation().getStartingLineNumber());
-				set.add(tc);
-				toggleSmells.add(new ToggleSmell(ToggleSmellType.DEAD_TOGGLE, set));
+			for (String string : deadToggles) {
+				if (string.contains(argName)) {
+					Set<ToggleContext> set = new HashSet<ToggleContext>();
+					ToggleContext tc = new ToggleContext(argName);
+					tc.addFileAndLocation(fcexpr.getContainingFilename(),
+							fcexpr.getFileLocation().getStartingLineNumber());
+					set.add(tc);
+					toggleSmells.add(new ToggleSmell(ToggleSmellType.DEAD_TOGGLE, set));
+				}
 			}
 		}
 	}
