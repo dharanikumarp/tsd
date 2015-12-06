@@ -22,11 +22,9 @@ public interface IToggleSmellDetector {
 	 *            - the C++ project to scan
 	 * @param methodName
 	 *            - the toggle method name
-	 * @param deadToggleFlags
-	 * 
 	 * @return the Set of detected toggle smells
 	 */
-	public Set<ToggleSmell> getToggleSmells(ICProject project, String methodName, Set<String> deadToggleFlags);
+	public Set<ToggleSmell> getToggleSmells(ICProject project, String methodName);
 
 	/**
 	 * Returns the number of files scanned by this detector.

@@ -26,6 +26,17 @@ import edu.concordia.tsd.smells.detector.AbstractSmellDetector;
  */
 public class DeadToggleSmellDetector extends AbstractSmellDetector {
 
+	private Set<String> deadToggles = null;
+
+	public DeadToggleSmellDetector() {
+		try {
+			deadToggles = new DeadAndStableToggleFlagsLoader().getDeadToggleFlags();
+			System.out.println("deadToggles " + deadToggles);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public ToggleSmellType getDetectorType() {
 		return ToggleSmellType.DEAD_TOGGLE;
@@ -33,6 +44,12 @@ public class DeadToggleSmellDetector extends AbstractSmellDetector {
 
 	@Override
 	protected void scanTranslationUnit(ITranslationUnit tu) {
+
+		// do not scan and get AST if there are no dead toggles.
+		if (deadToggles == null || deadToggles.isEmpty()) {
+			return;
+		}
+
 		try {
 			IASTTranslationUnit astTU = tu.getAST();
 			astTU.accept(new ToggleMethodNameVisitor());
