@@ -8,7 +8,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -69,7 +68,7 @@ public class IFStatementAndFunctionVisitor extends ASTVisitor {
 				}
 			}
 		}
-		return super.visit(statement);
+		return PROCESS_CONTINUE;
 	}
 
 	public Map<String, Set<Integer>> getToggleFlagsUsedInThisTU() {
