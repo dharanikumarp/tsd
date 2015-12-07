@@ -69,7 +69,7 @@ public class DeadToggleFlagVisitorVisitor extends ASTVisitor {
 				// is mingled with other conditons.
 			}
 		}
-		return super.visit(statement);
+		return PROCESS_CONTINUE;
 	}
 	
 	public Map<String, Set<Integer>> getToggleFlagsUsedInThisTU() {
