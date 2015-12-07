@@ -73,7 +73,26 @@ Software Refactoring, Software Re-Engineering, Software Design, FeatureToggles, 
 \end{IEEEkeywords}
 
 \section{Introduction}
-Identifying code smell is a vital task for better refactoring. Large amount of effort could be saved if a bad smell in a software project is ditected properly. Refactoring becomes more costly when there is lack of proper development documentations. Feature oriented Model Driven Development allows us develop software system to grow up in a feature oriented way that dictates the features to be distinguishable and understandable. To develop features in an isolated way while developing on a single trunk major software companies including Google~\cite{ChromeRepidRelease}, Facebook~\cite{Rossi2014Google} and Netflix use feature toggles to enable or disable a feature from the enduser access.
+Identifying code smell is a vital task for better re-factoring. Large amount of effort could be saved if a bad smell in a software project is detected properly. Re-factoring becomes more costly when there is lack of proper development documentations. Feature oriented Model Driven Development allows us develop software system to grow up in a feature oriented way that dictates the features to be distinguishable and understandable. To develop features in an isolated way while developing on a single trunk major software companies including Google~\cite{ChromeRepidRelease}, Facebook~\cite{Rossi2014Google} and Netflix use feature toggles to enable or disable a feature from the end-user access. However, improper use of feature toggles is a bad practice~\cite{Fowler2010FeatureToggle}. Feature toggles hide feature 
+related code blocks until the feature is ready to publish. Once the 
+development of a feature is done and published but still the toggle is 
+left in the code, the blocked code becomes a dead code which is a technical 
+debt.\\
+
+Feature toggle is a variable used in an ``\textit{if}'' statement to control the 
+features under development. Source code, related to a particular feature executes 
+based on the value of a toggle or the presence/absence of the toggle itself. 
+We found in Google Chrome, that they are using feature toggles to manage their 
+features during development or even during testing. Some feature toggles are 
+being used to allow end-users flip the behaviour of certain feature of the browser.\\
+
+Commonly known code smells such as long methods, code clone, 
+god class, state-checking etc.~\cite{marticorena2006extending} make the 
+code hard to understand, error-prone and unmanageable for further enhancement. 
+Besides the known taxonomy of code smells, toggle smells could also be joined 
+in that taxonomy as considerable technical debts that need to be detected 
+and re-factored for the further improvement of the software.
+\\
 
 \section{Related Works}
 \label{related-works}
