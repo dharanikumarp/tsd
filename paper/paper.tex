@@ -164,7 +164,7 @@ In our research objective we have to classify the code smells related to the usa
 
 Pierre Genevès and Nabil Layaïda~\cite{geneves2010eliminating} studied how to detect and remove dead code from Xquery programs. They propose a technique for performing static basic dead-code analysis and eliminate the dead code from an XQuery program. XQuery is a query and functional programming language basically takes one (or possibly several) XML document as input, performs some computation based on its tree view, and finally outputs a result in the form of another XML document. The core of the XQuery language is composed of XPath expressions that make it possible to navigate in the document tree and extract nodes that satisfy some conditions. They use two methodology \textbf{Path-Error Detection} and \textbf{Static Code Refactoring and Highlighting}. In the path-error detection they gave a scema as input to an XQuery program and For each XPath expression occurring in XQuery program, they just check that it is meaningful or not with respect to the constraints described in scema. If navigational information contained in a given path contradicts the constraints described in Scema then the path will always return an empty sequence of nodes.\\
 
-All XQuery instructions that depend on that path are dead code and maybe they should remove. For Static Code Refactoring they build an AST that consists in extracting all the path expressions from the program and checking their satisfiability individually. Then, in a second step, these paths are combined with the schema, and checked again for satisfiability. Each kind of unsatisfiable path is marked differently in the AST.each path is considered as a sequence of basic navigation steps possibly with qualifiers. The first step is analyzed. Then each additional step is successively appended to this initial step and the resulting path is analyzed in turn. This makes it possible to identify precisely where the error has been introduced in the path and remove them. Similarly we can detect toggle which is marked as DEAD TOGGLE in the toogle repository but still they are present in the code base but they have no impact on code flow.\\
+All XQuery instructions that depend on that path are dead code and maybe they should remove. For Static Code Refactoring they build an AST parser that consists in extracting all the path expressions from the program and checking their satisfiability individually. Then, in a second step, these paths are combined with the schema, and checked again for satisfiability. Each kind of unsatisfiable path is marked differently in the AST.each path is considered as a sequence of basic navigation steps possibly with qualifiers. The first step is analyzed. Then each additional step is successively appended to this initial step and the resulting path is analyzed in turn. This makes it possible to identify precisely where the error has been introduced in the path and remove them. Similarly we can detect toggle which is marked as DEAD TOGGLE in the toogle repository but still they are present in the code base but they have no impact on code flow.\\
 
 \section{Study Setup}
 \label{study-setup}
@@ -220,22 +220,59 @@ public enum ToggleFlags
 The client code can directly use this \textit{enum} class method as below ``ToggleFlags.FEATURE1.isEnabled()'' which looks much cleaner in code when compared to accessing the values through constant variables.
 
 \subsection{Compile-Time Macros}
-
+TODO: Faruk
 
 \section{Code Smells}
 \label{discussion}
-we have listed the code smells that is incurred by the usage of feature toggles on a project. We have given names that define the characteristics of the smell and provided potential causes and consequences for each smell. The following toggle smells are covered
-\begin{enumerate}
-\item Dead toggles
-\item Nested toggles
-\item Spaghetti (Combinatorial) toggles
-\item Mix of compile-time and runtime toggles
-\item Stable toggles
-\item Spread toggles
-\end{enumerate}
 
-\subsection{TOGGLE_DEAD (Dead toggles)}
-\label{TOGGLE_DEAD}
+We have listed the code smells that is incurred by the usage of feature toggles on a project. We have given names that define the characteristics of the smell and provided potential causes and consequences for each smell. 
+
+\subsection{TOGGLE\_DEAD (Dead toggles)}
+
+\begin{table}[ht]
+\caption{Dead Toggle Smell}
+\centering
+\begin{tabular}{|p{1.5cm}|p{7cm}|}
+ \hline\hline
+ Name & TOGGLE\_DEAD \\ \hline
+ Description & This smell is present if the toggle repository does not possess the information about the toggle flag, but the source code is still found to use the flags to encapsulate code blocks. \\ \hline
+ Example & 
+ \begin{lstlisting}
+if(switches::toggle1){
+    Do something
+}else{
+    Do something else
+}
+ \end{lstlisting}
+  \\ \hline
+
+ Possible reasons for their presence & The possible reasons why this smell is seen in the source code are:
+ \begin{enumerate}
+ \item{The feature for which the toggle was added earlier became obsolete and the developers forgot to remove the toggle flag associated with the feature from the source code.}
+ \item{Developer has removed the toggle flag from the toggle repository unknowingly and hence causing this smell to appear.}
+ \item{There are no adequate test cases (functional/unit) to cover the code encapsulated under the toggle flag. If unit test cases were present to cover all the toggles in the toggle repository, this smell could be potentially identified by a test failure.}
+ \end{enumerate}
+ \\ \hline
+ 
+ Consequences & The presence of this smell has the following consequences in the project
+ \begin{enumerate}
+ \item{The presence of dead code.}
+ \item{If the feature is found not to be obsolete, then this smell could identify the corruption done to the toggle repository by an erroneous commit.}
+ \end{enumerate}
+ \\ \hline
+ 
+Possible Detection Algorithm & This smell can be detected using the following approach:
+ \begin{enumerate}
+ \item{The source code will be scanned for the expressions used for detecting the state of the toggle. This could involve scanning for an invocation of a particular API or static utility method to get the current value of the toggle. An expression in this context is appropriate language syntax involved in retrieving the state of the toggle from the toggle repository.}
+ \item{Typically the parameter used in this expression is the value of the toggle flag name.}
+ \item{The detector will check the toggle repository for the presence of this flag.}
+ \item{If the flag is absent in the toggle repository then this smell is detected.}
+ \end{enumerate}
+ 
+ \\ \hline
+\end{tabular}
+\label{table:chrome-dir-data}
+\end{table}
 
 \section{Our Approach}
 \label{Methodology and Implimentation}
@@ -243,7 +280,7 @@ We have created a project named "tsd" which stands for toggle smell detector. Th
 
 Each smell detector is implemented by a extending an abstract class which provides a skeletal implementation of the interface. The event handler callback function will invoke all the toggle smell detector classes in an order and will print the details of the detected smells in the eclipse development workbench console window.\\
 
-Abstract syntax tree of the eclipse CDT API is utilized for each smell detection algorithm. The visitor designed pattern is applied on each of the source file to detect potential toggle smells. Each detector has an customized implementation of the AST visitor which is tailor made to detect that particular toggle smell. This design gives the flexibility to extend when an user interface is developed for this solution in the future. Typically this gives an option to detect a particular type of toggle smell in a code base by selecting the desired type from the menu. This is similar to how JDeodorant eclipse plugin user interface which has separate menu options to trigger a smell detection on a project or element within a project.
+Abstract syntax tree~\cite{AbstractSystaxTree} of the eclipse CDT API is utilized for each smell detection algorithm. The visitor designed pattern is applied on each of the source file to detect potential toggle smells. Each detector has an customized implementation of the AST visitor which is tailor made to detect that particular toggle smell. This design gives the flexibility to extend when an user interface is developed for this solution in the future. Typically this gives an option to detect a particular type of toggle smell in a code base by selecting the desired type from the menu. This is similar to how JDeodorant eclipse plugin user interface which has separate menu options to trigger a smell detection on a project or element within a project.
 
 \section{Implementation Details And Algorithm}
 \label{Details}
