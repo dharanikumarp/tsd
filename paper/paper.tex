@@ -86,6 +86,53 @@ We found in Google Chrome, that they are using feature toggles to manage their
 features during development or even during testing. Some feature toggles are 
 being used to allow end-users flip the behaviour of certain feature of the browser.\\
 
+They use feature toggle to manage the features during development as well as 
+in testing and canary phase.
+
+Chrome is a popular, large open source project that has been using feature toggles for more than five years and that we use as case study in this paper. 
+Instead of having a single configuration file for toggles, Chrome has 
+multiple “switch files” representing toggleable sets of related features. 
+In Fig~\ref{fig:switch-sets} we can see few of the switch-set files 
+in Chrome containing toggles for their respective modules. 
+We can see switch files for features related to how content is 
+displayed in Chrome (content\_switches.cc) or to testing of GPU 
+(test\_switches.cc).
+\begin{figure}
+\includegraphics[height=0.5in,width=3.5in]{figure/switches.png}
+\caption{Toggle set / Switch set files in Chrome source code.}
+\label{fig:switch-sets}
+\end{figure}
+Each switch file contains a set of feature toggles that can
+be enabled or disabled. In Chrome, feature toggles are strings
+that can be set or unset. For example, Fig.~\ref{fig:content-toggles} 
+shows that the
+feature toggle kDisableFlashFullscreen3d is being set by
+giving it the value “disable-flash-fullscreen-3d”. This disables
+the feature that renders graphics in 3D when flash content is
+presented full-screen. Advanced users might use this toggle
+to improve performance~\cite{kDisableFlashFullscreen3d}.\\
+\begin{figure}
+\includegraphics[height=0.5in,width=3.5in]{figure/toggleassigned.png}
+\caption{Example toggles inside content\_switches.cc}
+\label{fig:content-toggles}
+\end{figure}
+
+While developers are working on a feature, 
+toggles are used in an if condition to let this feature
+turn on/off. In Google Chrome this is done by adding a toggle 
+or removing it from the switch set or feature set file. 
+For the above example of kDisableFlashFullscreen3d, 
+Fig.~\ref{fig:toggle-use} is showing us that the feature toggle is 
+being used in an if statement and if it is set it will not allow the 
+rest of the code in the function to be executed, which enables 3D 
+flash-fullscreen. That means the feature 3D flash-fullscreen has been 
+disabled by turning this toggle on.\\
+\begin{figure}
+\includegraphics[height=2in,width=3.5in]{figure/toggle-use.png}
+\caption{Example of use of toggle}
+\label{fig:toggle-use}
+\end{figure}
+
 Commonly known code smells such as long methods, code clone, 
 god class, state-checking etc.~\cite{marticorena2006extending} make the 
 code hard to understand, error-prone and unmanageable for further enhancement. 
