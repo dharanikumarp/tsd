@@ -181,18 +181,22 @@ public final class ToggleStates {
 
 \subsection{Enumerations Interface}
 In Java there is a support to manage set of states through “enum” interface which is much richer when compared to languages like C, C++ (C++11 has similar support). The enum can implement interfaces and provide some flexibility in defining the toggle API (Togglz framework uses this approach) to use rather than using the constant variables directly.\\
-
+\begin{lstlisting}
 public enum ToggleFlags
 {
     FEATURE1(false),
     FEATURE2(true),
-    FEATURE3(false);\\
+    FEATURE3(false);
 
     private boolean state;
-    private ToggleFlags(boolean state) { this.state = state; }\\
+    private ToggleFlags(boolean state) { 				this.state = state; 
+    }
 
-    public boolean isEnabled() { return this.state; }
-}\\
+    public boolean isEnabled() { 
+    	return 	this.state; 
+    }
+}
+\end{lstlisting}
 
 The client code can directly use this \textit{enum} class method as below ``ToggleFlags.FEATURE1.isEnabled()'' which looks much cleaner in code when compared to accessing the values through constant variables.
 
@@ -352,6 +356,14 @@ There are several alternate solutions that can be used to detect the dead/stable
 \item{Eclipse and other IDE provide search through references and call hierarchy. This option performs the search through the internal index maintained by the IDE which is much faster than scanning each file and using the AST parser. However a developer will  have to search repeatedly for each of the dead/stable toggle flags and note down the locations of their usages and perform refactoring later.}
 \end{enumerate}
 
+\textbf{Advantages of our approach:}
+
+Our approach to detect the toggle smells uses the abstract syntax trees from the eclipse CDT API. This makes the present solution extensible for future enhancements to suggest or perform automated or semi-automated refactorings to eliminate the dead/stable toggle from the target system.
+
+Our solution could also be extended to do a software repository mining to identify the potential stable and dead toggle flags used in the project. The solution could then present the list of identified dead/stable toggles and present it to the developer and upon his/her confirmation could act on the detection of dead/stable toggle smells.
+
+This way the solution does not expect manual input from the user.
+
 \subsection{Nested Toggle detection}
 To search for the presence of nested toggle smell one, a developer could use one of the following methods
 
@@ -360,9 +372,15 @@ To search for the presence of nested toggle smell one, a developer could use one
 \item{The developer could also use IDE built-in capabilities to search for the instances where the toggle method is used within the source files. This gives the similar output as our smell detection algorithm, however the search does not indicate the smell, the developer has to manually introspect the source files to identify the nested toggle smell.}\\
 \end{enumerate}
 
+\textbf{Advantages of our approach: }
+
+Presenting a solution as an plugin within an IDE like eclipse facilitates the developers to quickly navigate to the file where the smell is found. Our solution results only the places where the nested toggle smell is observed ignoring other occurrences where the toggle method name is called. So the solutions presents more narrowed down results which saves time of the developer.
+
+As of today we are not aware of a search filter which can customize the search results such as find two or more occurrences of the invocation of the toggle method name within same class or same method. 
+
 This search gives many instances of occurrences of the toggle method name even in the places where the nested toggle smell is not observed. So it is the developer responsibility to go over the source code to identify the nested toggle smells.
 
-\subsection{Combinatorial (Spaghetti) Toggle Smell Detection}
+\subsection{Spread Toggle Smell Detection}
 
 \begin{enumerate}
 \item{Native OS commands:
@@ -381,6 +399,12 @@ This search gives many instances of occurrences of the toggle method name even i
 \end{itemize}
 }
 \end{enumerate}
+
+\textbf{Advantages of our solution}
+
+Our solution has an upper hand when compared with the manual searching through os commands or IDE search options might result in a large data set to correlate, compare and come to a conclusion of potential toggle smell.
+
+Our solution presents the toggle flag name, file path and low level details like line number which saves lot of time for the developers to identify this toggle smell.
 
 \section{Results}
 \label{threats}
@@ -463,7 +487,7 @@ There is another class of spaghetti (Combinatorial) toggle code smell which invo
 	}
 \end{lstlisting}
 	This kind of usage pattern will not be detected by the algorithm in its present form.
-	\subsection{Spread Toggle}
+\subsection{Spread Toggle}
 	As with limitations in the other toggle smell detection algorithms, the solution will not trace out the variables which contains the return value from the toggle method and being used in the conditional statement. 
 
 Also use of toggle flags for other purposes without the invocation of the toggle method will not be checked by the algorithm as such usages might not indicate a potential toggle code smell.
