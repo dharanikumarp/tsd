@@ -45,7 +45,7 @@
 \makeatother
 
 \begin{document}
-\title{Togglge Smell Detection in Google Chrome}
+\title{Toggle Smell Detection in Google Chrome}
 \author{
 Md Tajmilur Rahman, Dharani Kumar, Sumir Sarkar, Omar Faruk Miah\\
 Concordia University,~Montreal,~QC,~Canada
@@ -152,56 +152,7 @@ Jens Knoop, Oliver Ruthing, Bernhard Steffen~\cite{knoop1994partial} have worked
 
 Like their study we can identify the various taxonomies of toggle flag like \textbf{“INVALID TOGGLE”} and \textbf{“STABLE TOGGLE”} usages and smells  in a code base. We could leverage their techniques to see the impact of the toggle flag in the further parts of the program either in same program artifact or other artifacts so as to identify the way for their elimination. We would like to know the impacts of removing certain variable assignments (in our case toggle flags) and how it will impact the control flow structures.\\
 
-Tiago Pessoa and his colleagues~\cite{pessoa2012eclipse} develop an Eclipse Plugin to support Code Smells using Binary Logistic Regression Model. Their tool is for detecting code smells using BLRM by using the heuristic of expert knowledge to calibrate the model. BLRM is used for estimating the probability of occurrence of an event by fitting the data set on to a logistic curve. The binary logistic regression with dependent variable having two values (either code smell present or absent) has been used to detect the probability of code smell. The BLR is calibration is done using the statistical tools like R or SPSS and JRI (Java R Inteface) isWe classified toggle smells in different classes based on their usage in the source code. Before that we studied different types of feature toggles available in Google Chrome.
-
-\subsection{Compile Time toggles}
-The first set of usage patterns we descriptively belongs to the compile 
-time toggles. Here changing the toggle value requires modifying the source 
-code and generating a new binary to enable or disable a particular feature 
-for testing or release. The usage also relies upon the support in the 
-programming language for managing enumerations. 
-
-Even though the patterns are not complex, they are subtle for small projects (like capstone or start-ups) in order to manage feature dependencies and 
-avoid feature branching. Another benefit of compile time toggles is, when 
-cleaning up the toggle code at the end of toggle life. The location of the 
-changes could be easily identified by commenting out the field containing the toggle flag.
-
-\subsection{Constants Variables}
-In this pattern the value of the toggle state of a feature is managed through a constant variable declared in the program. In languages like C/C++, const modifiers will be used to inform that state of the feature flags will not change throughout the lifetime of the program. In Java final modifiers will be used. The data type of the variable could be a boolean or integer.\\
-
-For example,  in Java, the constants could be declared in a final static class and used in all source files using static imports.\\
-
-\begin{lstlisting}
-public final class ToggleStates {
-    public static final boolean IS\_FEATURE1_ENABLED = true;
-    public static final boolean IS\_FEATURE2_ENABLED = true;
-    ... ...
-}
-\end{lstlisting}
-
-\subsection{Enumerations Interface}
-In Java there is a support to manage set of states through “enum” interface which is much richer when compared to languages like C, C++ (C++11 has similar support). The enum can implement interfaces and provide some flexibility in defining the toggle API (Togglz framework uses this approach) to use rather than using the constant variables directly.\\
-\begin{lstlisting}
-public enum ToggleFlags
-{
-    FEATURE1(false),
-    FEATURE2(true),
-    FEATURE3(false);
-
-    private boolean state;
-    private ToggleFlags(boolean state) { 				this.state = state; 
-    }
-
-    public boolean isEnabled() { 
-    	return 	this.state; 
-    }
-}
-\end{lstlisting}
-
-The client code can directly use this \textit{enum} class method as below ``ToggleFlags.FEATURE1.isEnabled()'' which looks much cleaner in code when compared to accessing the values through constant variables.
-
-\subsection{Compile-Time Macros}
- used to interface with R language from the eclipse plugin. The plugin operates in two different modes (local and remote). The plugin allows the source code to be annotated using a UI action and then collects the metrics from the annotated source code. The following metrics are calculated by the plugin for the classes and methods: \textbf{1. LOC},\textbf{2. Depth of inheritance tree},\textbf{3. Number of methods},\textbf{4. Lack of cohesion},\textbf{5. Number of parameters} and \textbf{5. McCabe Cyclomatic Complexity}\\
+Tiago Pessoa and his colleagues~\cite{pessoa2012eclipse} develop an Eclipse Plugin to support Code Smells using Binary Logistic Regression Model. Their tool is for detecting code smells using BLRM by using the heuristic of expert knowledge to calibrate the model. BLRM is used for estimating the probability of occurrence of an event by fitting the data set on to a logistic curve. The binary logistic regression with dependent variable having two values (either code smell present or absent) has been used to detect the probability of code smell. The BLR is calibration is done using the statistical tools like R or SPSS and JRI (Java R Inteface) is used to interface with R language from the eclipse plugin. The plugin operates in two different modes (local and remote). The plugin allows the source code to be annotated using a UI action and then collects the metrics from the annotated source code. The following metrics are calculated by the plugin for the classes and methods: \textbf{1. LOC},\textbf{2. Depth of inheritance tree},\textbf{3. Number of methods},\textbf{4. Lack of cohesion},\textbf{5. Number of parameters} and \textbf{5. McCabe Cyclomatic Complexity}\\
 
 The authors have used binary logistic regression model in their plug-in development to determine the outcome of a code smell. We could leverage this technique to create a statistical model to determine whether there is a toggle related code smell by collecting data from the source code and using heuristic knowledge about the toggle. For example to determine whether a code block covered by a  “STABLE TOGGLE” is a potential candidate for refactoring the BLR can be trained with the meta data such as time the toggle was introduced, number of state changes during development, number of state changes in the field, number of bugs etc and the BLR can come with the prediction to indicate potential refactorings.\\
 
@@ -273,7 +224,18 @@ The client code can directly use this \textit{enum} class method as below ``Togg
 
 \section{Code Smells}
 \label{discussion}
-TODO
+we have listed the code smells that is incurred by the usage of feature toggles on a project. We have given names that define the characteristics of the smell and provided potential causes and consequences for each smell. The following toggle smells are covered
+\begin{enumerate}
+\item Dead toggles
+\item Nested toggles
+\item Spaghetti (Combinatorial) toggles
+\item Mix of compile-time and runtime toggles
+\item Stable toggles
+\item Spread toggles
+\end{enumerate}
+
+\subsection{TOGGLE_DEAD (Dead toggles)}
+\label{TOGGLE_DEAD}
 
 \section{Our Approach}
 \label{Methodology and Implimentation}
