@@ -536,7 +536,25 @@ Our solution presents the toggle flag name, file path and low level details like
 
 \section{Results}
 \label{threats}
-TODO
+\begin{table*}[ht]
+\caption{Number of Smells}
+\centering
+\begin{tabular}{|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|}
+ \hline\hline
+Module Name & Num Files & Nested Toggle \#Smells & Spread Toggle \#Smells & Combinatorial Toggle \#Smells &  Dead Toggle \#Smells & Average time to scan/Smell \\ \hline
+
+Base & 749 & 1 & 5 & 4  & 0 & 1556013 ms \\ \hline
+UI & 1501 & 2 & 1 & 0  & 0 & 888080 ms \\ \hline
+Net & 1534 & 16 & 0 & 9  & 0 & 927508 ms \\ \hline
+Media & 746 & 16 & 0 & 9  & 0 & 370563 ms \\ \hline
+ppapi & 563 & 0 & 0 & 0  & 0 & 944816 ms \\ \hline
+ash & 502 & 1 & 1 & 0  & 0 & 390563 ms \\ \hline
+chrome & 6105 & 109 & 31 & 24  & 0 & 2468547 ms \\ \hline
+
+\end{tabular}
+\label{table:chrome-result-data}
+\end{table*}
+
 \subsection{Qualitative}
 TODO
 \subsection{Quantitative}
