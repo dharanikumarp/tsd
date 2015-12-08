@@ -260,15 +260,9 @@ if(switches::toggle1){
  \end{enumerate}
  \\ \hline
  
-Possible Detection Algorithm & This smell can be detected using the following approach:
- \begin{enumerate}
- \item{The source code will be scanned for the expressions used for detecting the state of the toggle. This could involve scanning for an invocation of a particular API or static utility method to get the current value of the toggle. An expression in this context is appropriate language syntax involved in retrieving the state of the toggle from the toggle repository.}
- \item{Typically the parameter used in this expression is the value of the toggle flag name.}
- \item{The detector will check the toggle repository for the presence of this flag.}
- \item{If the flag is absent in the toggle repository then this smell is detected.}
- \end{enumerate}
+
  
- \\ \hline
+
 \end{tabular}
 \label{table:toggle-dead}
 \end{table}
