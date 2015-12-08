@@ -274,6 +274,89 @@ Possible Detection Algorithm & This smell can be detected using the following ap
 \label{table:chrome-dir-data}
 \end{table}
 
+
+
+\subsection{TOGGLE\_SPAGHETTI (Combinatorial toggles)}
+
+\begin{table}[ht]
+\caption{Combinatorial Toggle Smell}
+\centering
+\begin{tabular}{|p{1.3cm}|p{7cm}|}
+ \hline\hline
+ Description & This smell is observed when the execution of code is controlled by combination of states of several toggles.  \\ \hline 
+ Example &  
+ \begin{lstlisting} 
+ 	//Location: /chrome/browser/about_flags.cc (taken from Google chrome)
+void FlagsState::
+ConvertFlagsToSwitches(FlagsStorage* flags_storage, 
+base::CommandLine* command_line, SentinelsMode sentinels) {
+if (command_line->
+HasSwitch(switches::kNoExperiments))
+return;
+
+std::set<std::string> enabled_experiments;
+//FlagsForCurrentPlatform = FFCP
+GetSanitizedEnabledFFCP
+(flags_storage, &enabled_experiments);
+
+NameToSwitchAndValueMap name_to_switch_map;
+for (size_t i = 0; i < num_experiments; ++i) {
+const Experiment& e = experiments[i];
+if (e.type == Experiment::SINGLE_VALUE) {
+	SetFlagToSwitchMapping(
+	e.internal_name, e.command_line_switch,
+	e.command_line_value, &name_to_switch_map
+	);
+} else if (e.type == Experiment::MULTI_VALUE) {
+		for (int j = 0; j < e.num_choices; ++j) {
+		SetFlagToSwitchMapping(
+		e.NameForChoice(j),
+		e.choices[j].command_line_switch,
+		e.choices[j].command_line_value,
+		&name_to_switch_map
+		);
+	}
+	} else {
+		DCHECK_EQ(e.type,
+		Experiment::ENABLE_DISABLE_VALUE);
+		SetFlagToSwitchMapping(
+		e.NameForChoice(0), std::string(), std::string(),
+		&name_to_switch_map
+		);
+
+		SetFlagToSwitchMapping(
+		e.NameForChoice(1), e.command_line_switch,
+		e.command_line_value, &name_to_switch_map
+		);
+		SetFlagToSwitchMapping(
+		e.NameForChoice(2), e.disable_command_line_switch,
+		e.disable_command_line_value, &name_to_switch_map
+		);
+		}
+	}
+}
+
+ \end{lstlisting}
+ \\ \hline
+ 
+ Possible reasons for their presence & 
+ \begin{enumerate}
+\item Mix of canary use cases or A/B testing in toggle block could result in this kind of spaghetti code.
+\item Inconsistency in API’s used to manage toggles and canary use cases.
+\item Presence of more than one API to manage feature flags. Transition from legacy feature toggles to more formal one.
+\end{enumerate}
+ 
+  \\ \hline
+ Name & TOGGLE\_DEAD \\ \hline
+ Name & TOGGLE\_DEAD \\ \hline
+ Name & TOGGLE\_DEAD \\ \hline
+
+ 
+\end{tabular}
+\label{table:chrome-dir-data}
+\end{table}
+
+
 \section{Our Approach}
 \label{Methodology and Implimentation}
 We have created a project named "tsd" which stands for toggle smell detector. This project is implemented in Java using the Eclipse Plugin development API. The solution is developed as an eclipse plugin, without user interface support. The hook to initiate the toggle smell detection is implemented using the eclipse plugin API. A toolbar button is placed in the test workbench which triggers the smell detection. This is handled through an event handler callback method which is invoked by the eclipse runtime. The solution will currently detect smells in a C++ project using the eclipse CDT API.\\
