@@ -64,8 +64,8 @@ coupling and lack of cohesion. We classified the smells caused by toggles
 in six different patterns Dead Toggles, Nested Toggles, Combinatorial (spaghetti) Toggles, 
 Mix of Compile-Time and Runtime Toggles, Legacy toggles and Spread Toggles. 
 We created a tool ``Toggle Smell Detector (TSD)'' as an Eclipse plug-in using Eclipse C++ Development Tooling (CDT) to identify these toggle 
-smells in major modules of Google Chrome source code. We found TODO 
-nested toggles smells, TODO spaghetti toggles and TODO spread toggles in ``chrome'' and ``base'' modules of Google Chrome.\\
+smells in major modules of Google Chrome source code. We found 130 
+nested toggles smells, 37 spaghetti toggles and 37 spread toggles in  the following modules namely base, ui, net, media, ppapi, ash, chrome. In total we found 206 different toggle related code smells in 7 different modules from google chromium project.\\
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -168,7 +168,7 @@ All XQuery instructions that depend on that path are dead code and maybe they sh
 
 \section{Study Setup}
 \label{study-setup}
-In order to explore the feature toggle related smell we have searched for open source projects and found some projects with feature toggle implemented in those project. But we have choose Google chromium as our main code base because it has more then 5 years active development life cycle with feature toggle in it and it has rapid released. So there might be any issue with feature toggle which might not notice properly. We have used Eclipse Plugin Development Environment(PDE) which is a Java based framework, it provides support for building source code analysis applications. And we have used Eclipse C++ Development Tooling (CDT) which is Eclipse variant to support development of C/C++ applications. This is where the C++ project will be loaded from google chromium source code on the test workbench.Our toggle smell detection algorithm is implemented in java. 
+In order to explore the feature toggle related smell we have searched for open source projects and found some projects with feature toggle implemented in those project. But we have choose Google chromium as our main code base because it has more then 5 years active development life cycle with feature toggle in it and it has rapid releases. We have used Eclipse Plugin Development Environment(PDE) which is a Java based framework, it provides support for building source code analysis applications. And we have used Eclipse C++ Development Tooling (CDT) which is Eclipse variant to support development of C/C++ applications. This is where the C++ project will be loaded from google chromium source code on the test workbench.Our toggle smell detection algorithm is implemented in java. 
 \section{Case Study}
 \label{results}
 We classified toggle smells in different classes based on their usage in 
