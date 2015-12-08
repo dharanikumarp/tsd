@@ -170,12 +170,13 @@ All XQuery instructions that depend on that path are dead code and maybe they sh
 \label{study-setup}
 In order to explore the feature toggle related smell we have searched for open source projects and found some projects with feature toggle implemented in those project. But we have choose Google chromium as our main code base because it has more then 5 years active development life cycle with feature toggle in it and it has rapid releases. We have used Eclipse Plugin Development Environment(PDE) which is a Java based framework, it provides support for building source code analysis applications. And we have used Eclipse C++ Development Tooling (CDT) which is Eclipse variant to support development of C/C++ applications. This is where the C++ project will be loaded from google chromium source code on the test workbench.Our toggle smell detection algorithm is implemented in java. 
 \section{Case Study}
-\label{results}
+\label{case-study}
 We classified toggle smells in different classes based on their usage in 
 the source code. Before that we studied different types of feature toggles 
 available in Google Chrome.
-
-\subsection{Compile Time toggles}
+\subsection{Toggle Pattern}
+First we will list out the possible ways of using feature toggles in any project, some of which might depend on the availability of feature toggle framework in programming languages.
+\subsubsection{Compile Time Toggles}
 The first set of usage patterns we descriptively belongs to the compile 
 time toggles. Here changing the toggle value requires modifying the source 
 code and generating a new binary to enable or disable a particular feature 
@@ -187,7 +188,7 @@ avoid feature branching. Another benefit of compile time toggles is, when
 cleaning up the toggle code at the end of toggle life. The location of the 
 changes could be easily identified by commenting out the field containing the toggle flag.
 
-\subsection{Constants and Variables}
+\subsubsection{Constants and Variables}
 In this pattern the value of the toggle state of a feature is managed through a constant variable declared in the program. In languages like C/C++, const modifiers will be used to inform that state of the feature flags will not change throughout the lifetime of the program. In Java final modifiers will be used. The data type of the variable could be a boolean or integer.\\
 
 For example,  in Java, the constants could be declared in a final static class and used in all source files using static imports.\\
@@ -200,7 +201,7 @@ public final class ToggleStates {
 }
 \end{lstlisting}
 
-\subsection{Enumerations}
+\subsubsection{Enumerations}
 In Java there is a support to manage set of states through “enum” interface which is much richer when compared to languages like C, C++ (C++11 has similar support). The enum can implement interfaces and provide some flexibility in defining the toggle API (Togglz framework uses this approach) to use rather than using the constant variables directly.\\
 
 \begin{lstlisting}
@@ -219,8 +220,25 @@ public enum ToggleFlags
 
 The client code can directly use this \textit{enum} class method as below ``ToggleFlags.FEATURE1.isEnabled()'' which looks much cleaner in code when compared to accessing the values through constant variables.
 
-\subsection{Compile-Time Macros}
-TODO: Faruk
+\subsubsection{Compile-Time Macros}
+This kind of usage is predominant in languages which support macros (C, C++) and used for conditional compilation. This violates the fundamental principle of the feature toggles. Even though feature toggle experts does not recommend this approach, some still prefer to use.
+\begin{lstlisting}
+#ifdef FEATURE1
+….
+#endif
+\end{lstlisting}
+
+\subsection{Run time toggles}
+Run time toggles usage comes in two flavors, in one the state of the feature flags will be modified without restarting the program or service managing the feature, in another flavor the toggle value will be changed, but requires restart of the program or service. The deployment model depends on the infrastructure of the target environment. The advantage of the run time toggle when compared to the compile time toggles is that they don’t require touching the source code file and regenerate the binary. In languages similar to Javascript, where binary generation is not required because of the execution model, keeping the toggle repository separate from the source code (in the form of JSON) will prevent the minification process.
+\subsubsection{Live Update With Program Restart}
+In this usage, the toggle flags value will be changed and new toggle values will come into effect only when the program or service is restarted. Though this will have an impact on the availability of the service or program for the duration of the restart, the impact could be minimized by scheduling the toggle changes to the off-peak load hours. But if the program restart time is not significant and if there is a high availability setup in place, then this process will give good benefits. There are different ways to doing this:
+\begin{itemize}
+\item External files (.json, .properties, .csv) with one time loading
+\item Command Line Arguments
+\item Live update without program restart
+\item External files with auto reloading
+\item Private API or Interface to change toggle state
+\end{itemize}
 
 \section{Code Smells}
 \label{discussion}
