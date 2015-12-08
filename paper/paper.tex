@@ -161,9 +161,9 @@ Gail C. Murphy et. al.~\cite{murphy2001separating} investigate about the separat
 
 They considered two common kinds of feature encodings in two existing Java systems. One is tangling of a feature within a method in the gnu.regexp system and another is tangling of a feature between classes in the jFTPd system.These entangling types In first case, probably lost cohesion of Lightweight SOC approach. But the splitting and restructuring was done by manually: moving fields, moving methods, forming methods, modifying inheritance and interface associations. Then they tried to separate these features using their different mechanisms (Hyper/J, AspectJ and lightweight separation of concern mechanism). Tangling in a Single Method is the method they worked with from the gnu.regexp system. This method performs part of the regular expression matching functionality. It supports several different kinds of matches, including matches across lines, matches where carat characters do not need to match at the beginning of the line and so on. Each of these kind of matches corresponds to a different feature. They wanted to separate these features that were originally tangled in a single method so as to produce a system that might support, for instance, only multi-line matches.\\
 
-In our research objective we have to classify the code smells related to the usage of features toggles. One such code smell is to identify the distribution of the same toggles flag among various sources files, we have named this as “TOGGLE SPREAD”. This indicates the loose cohesion of a feature. This study is used to identify the features from the source code using Aspect oriented programming.\\
+In our research objective we have to classify the code smells related to the usage of features toggles. One such code smell is to identify the distribution of the same toggles flag among various sources files, we have named this as ``TOGGLE SPREAD''. This indicates the loose cohesion of a feature. This study is used to identify the features from the source code using Aspect oriented programming.\\ 
 
-Pierre Genevès and Nabil Layaïda~\cite{geneves2010eliminating} studied how to detect and remove dead code from Xquery programs. They propose a technique for performing static basic dead-code analysis and eliminate the dead code from an XQuery program. XQuery is a query and functional programming language basically takes one (or possibly several) XML document as input, performs some computation based on its tree view, and finally outputs a result in the form of another XML document. The core of the XQuery language is composed of XPath expressions that make it possible to navigate in the document tree and extract nodes that satisfy some conditions. They use two methodology \textbf{Path-Error Detection} and \textbf{Static Code Refactoring and Highlighting}. In the path-error detection they gave a scema as input to an XQuery program and For each XPath expression occurring in XQuery program, they just check that it is meaningful or not with respect to the constraints described in scema. If navigational information contained in a given path contradicts the constraints described in Scema then the path will always return an empty sequence of nodes.\\
+In the path-error detection they gave a scema as input to an XQuery program and For each XPath expression occurring in XQuery program, they just check that it is meaningful or not with respect to the constraints described in scema. If navigational information contained in a given path contradicts the constraints described in Scema then the path will always return an empty sequence of nodes.\\
 
 All XQuery instructions that depend on that path are dead code and maybe they should remove. For Static Code Refactoring they build an AST parser that consists in extracting all the path expressions from the program and checking their satisfiability individually. Then, in a second step, these paths are combined with the schema, and checked again for satisfiability. Each kind of unsatisfiable path is marked differently in the AST.each path is considered as a sequence of basic navigation steps possibly with qualifiers. The first step is analyzed. Then each additional step is successively appended to this initial step and the resulting path is analyzed in turn. This makes it possible to identify precisely where the error has been introduced in the path and remove them. Similarly we can detect toggle which is marked as DEAD TOGGLE in the toogle repository but still they are present in the code base but they have no impact on code flow.\\
 
@@ -230,7 +230,7 @@ We have listed the code smells that is incurred by the usage of feature toggles 
 
 \subsection{TOGGLE\_DEAD (Dead toggles)}
 
-\begin{table}[ht]
+\begin{table}[!h]
 \caption{Dead Toggle Smell}
 \centering
 \begin{tabular}{|p{1.5cm}|p{6.6cm}|}
@@ -271,13 +271,14 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  
  \\ \hline
 \end{tabular}
-\label{table:chrome-dir-data}
+\label{table:toggle-dead}
 \end{table}
 
-\begin{table}[ht]
-\caption{Dead Toggle Smell}
+\subsection{TOGGLE\_NEST (Nested Toggles)}
+\begin{table}[!h]
+\caption{Nested Toggle Smell}
 \centering
-\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
 \hline\hline
  Description & This smell is observed when one toggle flag is dependent on the state of one or more other toggle flags. \\ \hline
 
@@ -285,11 +286,10 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  \begin{enumerate}
  \item{A variable might be used to store the state of the dependent toggles and will be used as a short circuit while checking the state of the actual feature flag.
  \begin{lstlisting} 
- boolean showF1Menu = ToggleService.isOn(“SHOW_F1_MENU”);
+ boolean s = functionX();
 
- if(showF1Menu && ToggleService.isOn(“SHOW_F1_F11_MENU”) {
- ….
-
+ if(s && functionX()){
+ ...
  }
  \end{lstlisting}
  }
@@ -326,43 +326,28 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  Consequences & Too many levels of nesting will add to the cost of testing the changes so as to cover all code paths with state on/off.
  \\ \hline
 
- Detection & This smell could be detected using the following approach.\\
- \begin{enumerate}
- \item{In order to identify potential positive instances of this smell, the detector could use trained patterns using a mathematical model like BLR(Binary Logistic Regression).}
- \item{Or simple level count could be used to identify the smell. Say for example if the number of nested toggles levels is greater than 2 then there is a possibility of the presence of this code smell.}
- \item{Also the detector can be enhanced to identify that there is a common master toggle used for the most of the nested toggles and could be prevented in identifying false smells.}
- \end{enumerate}
-  
- \\ \hline
  
 \end{tabular}
-\label{table:chrome-dir-data}
+\label{table:nested-toggle}
 \end{table}
 
-\subsection{Mix of Compile time and run-time toggles)}
+\subsection{TOGGLE\_MIX (Mix of compile-time and run-time toggles)}
 
-\begin{table}[ht]
+\begin{table}[!h]
 \caption{TOGGLE\_MIX}
 \centering
-\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
  \hline\hline
  Description & This smell is observed when the source code uses multiple techniques to manage toggles. One such usage is to combine compile time (\#define, \#ifndef) along with run time toggles.  \\ \hline
 
  Example & 
  \begin{lstlisting}
- //Location: /chrome/app/chrome_main_delegate.cc (Taken from Google chrome)
-#if defined(OS_MACOSX)
-// Mac needs them too for scrollbar related images and for sandbox
-// profiles.
-#if !defined(DISABLE_NACL)
+#if
 process_type == switches::kNaClLoaderProcess ||
 #endif
 process_type == switches::kPpapiPluginProcess ||
-process_type == switches::kPpapiBrokerProcess ||
-process_type == switches::kGpuProcess ||
+process_type == switches::kGpuProcess
 #endif
-process_type == switches::kRendererProcess ||
-process_type == switches::kUtilityProcess;
 }
  \end{lstlisting}
  
@@ -380,9 +365,8 @@ Possible reasons for their presence &
 \end{enumerate}
  \\ \hline
 
- Detection & TBD \\ \hline
 \end{tabular}
-\label{table:chrome-dir-data}
+\label{table:mix-toggle}
 \end{table}
 
 \subsection{TOGGLE\_STABLE (Stable Toggles)}
@@ -390,7 +374,7 @@ Possible reasons for their presence &
 \begin{table}[!h]
 \caption{TOGGLE\_STABLE}
 \centering
-\begin{tabular}{|p{1.3cm}|p{6.6cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
  \hline\hline
  Description & This smell is observed when the feature has received enough feedback from the production environment and has been observed stable through several releases and became permanent in the product. However the code for the features are still running with the toggle check.  \\ \hline
 
