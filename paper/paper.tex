@@ -622,7 +622,7 @@ IF(!ToggleMethod("FLAG1")) {
 	}
 }\end{lstlisting}
 
-and the vice versa variant. It will not detect if there is a complex conditional expression if used within the conditional statement. The complex condition includes but not limited to logical AND, logical OR operators whose operands could be either the toggle method call or other expressions. 
+and the vice verse variant. It will not detect if there is a complex conditional expression if used within the conditional statement. The complex condition includes but not limited to logical AND, logical OR operators whose operands could be either the toggle method call or other expressions. 
 
 For example the algorithm will not detect the following pattern as a nested toggle smell even though it qualifies for such smell
 \begin{lstlisting}
@@ -664,6 +664,43 @@ There is another class of spaghetti (Combinatorial) toggle code smell which invo
 Also use of toggle flags for other purposes without the invocation of the toggle method will not be checked by the algorithm as such usages might not indicate a potential toggle code smell.
 
 Also many a times few configuration toggle flags will be used throughout the project, though our solution detects this usage as a toggle spread, the solution could be improved to accept feedback from the developers and should improve the search criterias.
+
+\section{Future Improvements}
+\label{Future Improvements}
+We feel the following improvements are possible in the tool based on the direction it is being extended.
+
+\begin{enumerate}
+
+\item{Overall time improvement
+\begin{itemize}
+\item At present each algorithm is ran sequentially, which could be improved by using multiple threads to run each algorithm in a parallel thread which can improve the overall time taken for detecting all smells in a source code module.
+\end{itemize}
+}
+
+\item{User interface
+\begin{itemize}
+\item At present there is no user interface support and results are directed to the console view or could be directed to an output file from the eclipse run configuration.
+\item But if user interface is desired, then a menu option could be provided to run each detection algorithm separately. This way the tool will facilitate the developers intend to fix only a particular type of toggle code smell, which also saves time.
+\end{itemize}
+}
+
+\item{Avoiding ‘N’ passes
+\begin{itemize}
+\item At present for each smell detection type, the algorithm scans the same set of files again and again. This would lead to scaling problem when ran on a large module. We have already observed with the results indicating 41 minutes to scan the “chrome” module for each smell detection. This is significant problem with the current algorithm.
+\item Instead a common data structure could be built by a single pass of the entire source code which could be leveraged by each smell detection algorithm. This has the following advantages
+\end{itemize}
+}
+
+\item{User interface
+\begin{itemize}
+\item 
+\item
+\end{itemize}
+}
+
+
+
+\end{enumerate}
 
 \section{Conclusion}
 \label{conclusion}
