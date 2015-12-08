@@ -356,6 +356,77 @@ if (e.type == Experiment::SINGLE_VALUE) {
 \label{table:chrome-dir-data}
 \end{table}
 
+\subsection{Mix of Compile time and run-time toggles)}
+
+\begin{table}[ht]
+\caption{TOGGLE\_MIX}
+\centering
+\begin{tabular}{|p{1.5cm}|p{7cm}|}
+ \hline\hline
+ Description & This smell is observed when the source code uses multiple techniques to manage toggles. One such usage is to combine compile time (\#define, \#ifndef) along with run time toggles.  \\ \hline
+
+ Example & 
+ \begin{lstlisting}
+ //Location: /chrome/app/chrome_main_delegate.cc (Taken from Google chrome)
+#if defined(OS_MACOSX)
+// Mac needs them too for scrollbar related images and for sandbox
+// profiles.
+#if !defined(DISABLE_NACL)
+process_type == switches::kNaClLoaderProcess ||
+#endif
+process_type == switches::kPpapiPluginProcess ||
+process_type == switches::kPpapiBrokerProcess ||
+process_type == switches::kGpuProcess ||
+#endif
+process_type == switches::kRendererProcess ||
+process_type == switches::kUtilityProcess;
+}
+ \end{lstlisting}
+ 
+ \\ \hline
+
+Possible reasons for their presence & 
+\begin{enumerate}
+	\item This is in general observed when the code is based on compiled languages where conditional compilation prevents unnecessary changes from being included into the target binary (to reduce size). But unfortunately within those statements the feature toggle statements are also included.
+\end{enumerate}	 
+ \\ \hline
+ Consequences & 
+ Presence of this smell indicates the following possible consequences
+ \begin{enumerate}
+	\item Cost of testing will increase so as to cover all the code paths with different binary versions.
+\end{enumerate}
+ \\ \hline
+
+ Detection & TBD \\ \hline
+\end{tabular}
+\label{table:chrome-dir-data}
+\end{table}
+
+\subsection{TOGGLE\_STABLE (Stable Toggles)}
+
+\begin{table}[ht]
+\caption{TOGGLE\_STABLE}
+\centering
+\begin{tabular}{|p{1.3cm}|p{7cm}|}
+ \hline\hline
+ Description & This smell is observed when the feature has received enough feedback from the production environment and has been observed stable through several releases and became permanent in the product. However the code for the features are still running with the toggle check.  \\ \hline
+
+Example & Not Applicable \\ \hline
+Possible reasons for their presence & There is a lack of discipline in managing the lifecycle of the toggle in the organisation or in the project. \\ \hline
+Example & Not Applicable \\ \hline
+Consequences & Presence of this smell indicates the following possible consequences in the
+\begin{enumerate}
+	\item This is rated as the one of the worst technical debt for any source code as it will become non-trivial to remove the toggled code block for all features which are stable in the production late in the cycle.
+\item The changes done to remove the toggled code block will cost regression and testing cycle.
+\item By the time, a plan is derived there might be several other toggles that will be part of the source which might complicate the elimination of this stable toggle. 
+\end{enumerate}
+\\ \hline
+
+\end{tabular}
+\label{table:chrome-dir-data}
+\end{table}
+
+
 
 \section{Our Approach}
 \label{Methodology and Implimentation}
