@@ -541,11 +541,27 @@ Our solution presents the toggle flag name, file path and low level details like
 
 \section{Results}
 \label{threats}
-TODO
-\subsection{Qualitative}
-TODO
-\subsection{Quantitative}
-TODO
+
+To get quantitative and qualitative results we did the following tasks:
+
+\begin{itemize}
+\item Classified the list of modules which has cpp source units. We derived this list by using native OS commands like GREP, FIND on Linux system.
+\item The list of modules within chrome project and their total of cpp files within each module is presented in the table <table num>
+\item From that list we picked up 7 modules which has high number of C++ source files (Greater than 500).
+\item We ran our smell detection program on each of the modules to find potential toggle smells.
+\item The results are shown in the table
+\item From the table below we can observe that NESTED\_TOGGLE smell is quite high in number when compared to other smell types. In the module by name “chrome” which has the highest number of C++ compilation units, the NESTED toggle smells have been found in huge number (109) when compared to all other modules.
+\end{itemize}
+
+\subsection{Verification of results}
+\label{Result Varification}
+Except for the module “chrome”, we manually verified and confirmed that smells reported by algorithm are indeed presence in the code and not a false positive. Also for the modules of lesser size like ppapi, where no smells were found by the detector, we manually checked the source code for potential code smells by using the eclipse search by file and search by references feature. We invoked a search by references for the API invoking the toggle method name. Though there were instances of method invocations, there were not any potential code smells observed through manual inspection.
+
+\subsection{No Dead or Stable Toggle Smell}
+For our study we have taken the latest version of chromium project source code using the ``\textbf{depot\_tools}''. However for the current version we didn’t had historical data of the dead toggles. So in order to validate the dead toggle detection algorithm, we manually induced the smells in the code and verified that our algorithm is working as designed.
+\\
+
+So to confirm the behavior, we also took the earlier version of the code from the repository and ran the dead toggle smell detection algorithm and we found the following results. This prove that algorithm was indeed able to detect smells in the actual code.
 
 \section{Limitations}
 \label{Limitation of our approach}
