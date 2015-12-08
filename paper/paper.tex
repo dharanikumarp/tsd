@@ -232,7 +232,7 @@ We have listed the code smells that is incurred by the usage of feature toggles 
 \begin{table}[ht]
 \caption{Dead Toggle Smell}
 \centering
-\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
  \hline\hline
  Description & This smell is present if the toggle repository does not possess the information about the toggle flag, but the source code is still found to use the flags to encapsulate code blocks. \\ \hline
  Example & 
@@ -386,10 +386,10 @@ Possible reasons for their presence &
 
 \subsection{TOGGLE\_STABLE (Stable Toggles)}
 
-\begin{table}[ht]
+\begin{table}[!h]
 \caption{TOGGLE\_STABLE}
 \centering
-\begin{tabular}{|p{1.3cm}|p{7cm}|}
+\begin{tabular}{|p{1.3cm}|p{6.6cm}|}
  \hline\hline
  Description & This smell is observed when the feature has received enough feedback from the production environment and has been observed stable through several releases and became permanent in the product. However the code for the features are still running with the toggle check.  \\ \hline
 
