@@ -58,11 +58,11 @@ In Google Chrome developers use feature toggles to control their features
 and keep developing on a single trunk. This paper investigates code smell 
 caused by improper use of feature toggles in Google Chrome that we call 
 as toggle smell. Using feature toggles to hide/show features is an old 
-concept but recently being practice in many software companies. Improper 
+concept but recently being practised in many software companies. Improper 
 use of toggles might cause code smell including duplicate code, dead code, 
 coupling and lack of cohesion. We classified the smells caused by toggles 
 in six different patterns Dead Toggles, Nested Toggles, Combinatorial (spaghetti) Toggles, 
-Mix of Compile-Time and Runtime Toggles, Legacy/Stable toggles and Spread Toggles. 
+Mix of Compile-Time and Runtime Toggles, Legacy toggles and Spread Toggles. 
 We created a tool ``Toggle Smell Detector (TSD)'' as an Eclipse plug-in using Eclipse C++ Development Tooling (CDT) to identify these toggle 
 smells in major modules of Google Chrome source code. We found TODO 
 nested toggles smells, TODO spaghetti toggles and TODO spread toggles in ``chrome'' and ``base'' modules of Google Chrome.\\
@@ -234,7 +234,6 @@ We have listed the code smells that is incurred by the usage of feature toggles 
 \centering
 \begin{tabular}{|p{1.5cm}|p{7cm}|}
  \hline\hline
- Name & TOGGLE\_DEAD \\ \hline
  Description & This smell is present if the toggle repository does not possess the information about the toggle flag, but the source code is still found to use the flags to encapsulate code blocks. \\ \hline
  Example & 
  \begin{lstlisting}
@@ -274,83 +273,66 @@ Possible Detection Algorithm & This smell can be detected using the following ap
 \label{table:chrome-dir-data}
 \end{table}
 
-
-
-\subsection{TOGGLE\_SPAGHETTI (Combinatorial toggles)}
-
 \begin{table}[ht]
-\caption{Combinatorial Toggle Smell}
+\caption{Dead Toggle Smell}
 \centering
-\begin{tabular}{|p{1.3cm}|p{7cm}|}
- \hline\hline
- Description & This smell is observed when the execution of code is controlled by combination of states of several toggles.  \\ \hline 
- Example &  
+\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\hline\hline
+ Description & This smell is observed when one toggle flag is dependent on the state of one or more other toggle flags. \\ \hline
+
+ Example & There are different patterns of this code smell similar to ``Message Chains''
+ \begin{enumerate}
+ \item{A variable might be used to store the state of the dependent toggles and will be used as a short circuit while checking the state of the actual feature flag.
  \begin{lstlisting} 
- 	//Location: /chrome/browser/about_flags.cc (taken from Google chrome)
-void FlagsState::
-ConvertFlagsToSwitches(FlagsStorage* flags_storage, 
-base::CommandLine* command_line, SentinelsMode sentinels) {
-if (command_line->
-HasSwitch(switches::kNoExperiments))
-return;
+ boolean showF1Menu = ToggleService.isOn(“SHOW_F1_MENU”);
 
-std::set<std::string> enabled_experiments;
-//FlagsForCurrentPlatform = FFCP
-GetSanitizedEnabledFFCP
-(flags_storage, &enabled_experiments);
+ if(showF1Menu && ToggleService.isOn(“SHOW_F1_F11_MENU”) {
+ ….
 
-NameToSwitchAndValueMap name_to_switch_map;
-for (size_t i = 0; i < num_experiments; ++i) {
-const Experiment& e = experiments[i];
-if (e.type == Experiment::SINGLE_VALUE) {
-	SetFlagToSwitchMapping(
-	e.internal_name, e.command_line_switch,
-	e.command_line_value, &name_to_switch_map
-	);
-} else if (e.type == Experiment::MULTI_VALUE) {
-		for (int j = 0; j < e.num_choices; ++j) {
-		SetFlagToSwitchMapping(
-		e.NameForChoice(j),
-		e.choices[j].command_line_switch,
-		e.choices[j].command_line_value,
-		&name_to_switch_map
-		);
-	}
-	} else {
-		DCHECK_EQ(e.type,
-		Experiment::ENABLE_DISABLE_VALUE);
-		SetFlagToSwitchMapping(
-		e.NameForChoice(0), std::string(), std::string(),
-		&name_to_switch_map
-		);
-
-		SetFlagToSwitchMapping(
-		e.NameForChoice(1), e.command_line_switch,
-		e.command_line_value, &name_to_switch_map
-		);
-		SetFlagToSwitchMapping(
-		e.NameForChoice(2), e.disable_command_line_switch,
-		e.disable_command_line_value, &name_to_switch_map
-		);
-		}
-	}
-}
-
+ }
  \end{lstlisting}
+ }
+ 
+ \item{The code for the current feature will be under the encapsulation of a dependent feature toggle.
+ \begin{lstlisting}
+ if(ToggleService.isOn("F1")){
+   ...
+   if(ToggleService.isOn(“F11”)){
+   }
+   ...
+ }
+ \end{lstlisting}
+ } 
+ \end{enumerate}
+ 
  \\ \hline
  
- Possible reasons for their presence & 
+ Possible reasons for their presence & This smell is found for one of the following possible reasons:
  \begin{enumerate}
-\item Mix of canary use cases or A/B testing in toggle block could result in this kind of spaghetti code.
-\item Inconsistency in API’s used to manage toggles and canary use cases.
-\item Presence of more than one API to manage feature flags. Transition from legacy feature toggles to more formal one.
-\end{enumerate}
+ \item{Feature related to the nested toggles are related to each other. Existence of one feature depends on another feature. Features exhibit a composition relationship.
+  \begin{enumerate}
+  \item{For example if the main menu item is not enabled or made visible, then there is the submenus will not be visible or enabled. So in this scenario the code turn on the submenus will be encapsulated under the toggle flag check of the main menu item.}
+  \end{enumerate}
+ }
+ \item{Sometimes a master toggle switch is used to turn on/off many closely related features.
+  \begin{enumerate}
+  \item{In some software segment like e-commerce/online gambling/gaming, a set of features will be targeted for audience of a particular region, in these scenarios a master toggle is used to control the dark launch all/some of the features.}
+  \end{enumerate}
+ }
+ \end{enumerate}
  
-  \\ \hline
- Name & TOGGLE\_DEAD \\ \hline
- Name & TOGGLE\_DEAD \\ \hline
- Name & TOGGLE\_DEAD \\ \hline
+ \\ \hline
+ Consequences & Too many levels of nesting will add to the cost of testing the changes so as to cover all code paths with state on/off.
+ \\ \hline
 
+ Detection & This smell could be detected using the following approach.\\
+ \begin{enumerate}
+ \item{In order to identify potential positive instances of this smell, the detector could use trained patterns using a mathematical model like BLR(Binary Logistic Regression).}
+ \item{Or simple level count could be used to identify the smell. Say for example if the number of nested toggles levels is greater than 2 then there is a possibility of the presence of this code smell.}
+ \item{Also the detector can be enhanced to identify that there is a common master toggle used for the most of the nested toggles and could be prevented in identifying false smells.}
+ \end{enumerate}
+  
+ \\ \hline
  
 \end{tabular}
 \label{table:chrome-dir-data}
@@ -425,8 +407,6 @@ Consequences & Presence of this smell indicates the following possible consequen
 \end{tabular}
 \label{table:chrome-dir-data}
 \end{table}
-
-
 
 \section{Our Approach}
 \label{Methodology and Implimentation}
