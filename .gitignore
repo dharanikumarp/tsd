@@ -3,6 +3,7 @@ paper/*.log
 paper/*.gz
 paper/*.blg
 paper/*.bbl
+paper/*.pdf
 
 *.class
 
