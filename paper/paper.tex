@@ -527,25 +527,6 @@ Our solution presents the toggle flag name, file path and low level details like
 \section{Results}
 \label{threats}
 
-\begin{table*}[ht]
-\caption{Number of Smells}
-\centering
-\begin{tabular}{|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|p{2.1cm}|}
- \hline\hline
-Module Name & Num Files & Nested Toggle \#Smells & Spread Toggle \#Smells & Combinatorial Toggle \#Smells &  Dead Toggle \#Smells & Average time to scan/Smell \\ \hline
-
-Base & 749 & 1 & 5 & 4  & 0 & 1556013 ms \\ \hline
-UI & 1501 & 2 & 1 & 0  & 0 & 888080 ms \\ \hline
-Net & 1534 & 16 & 0 & 9  & 0 & 927508 ms \\ \hline
-Media & 746 & 16 & 0 & 9  & 0 & 370563 ms \\ \hline
-ppapi & 563 & 0 & 0 & 0  & 0 & 944816 ms \\ \hline
-ash & 502 & 1 & 1 & 0  & 0 & 390563 ms \\ \hline
-chrome & 6105 & 109 & 31 & 24  & 0 & 2468547 ms \\ \hline
-
-\end{tabular}
-\label{table:chrome-result-data}
-\end{table*}
-
 To get quantitative and qualitative results we did the following tasks:
 
 \begin{itemize}
@@ -557,7 +538,7 @@ To get quantitative and qualitative results we did the following tasks:
 \item From the table below we can observe that NESTED\_TOGGLE smell is quite high in number when compared to other smell types. In the module by name “chrome” which has the highest number of C++ compilation units, the NESTED toggle smells have been found in huge number (109) when compared to all other modules.
 \end{itemize}
 
-\subsection{Verification of Results}
+\subsection{Verification of results}
 \label{Result Varification}
 Except for the module “chrome”, we manually verified and confirmed that smells reported by algorithm are indeed presence in the code and not a false positive. Also for the modules of lesser size like ppapi, where no smells were found by the detector, we manually checked the source code for potential code smells by using the eclipse search by file and search by references feature. We invoked a search by references for the API invoking the toggle method name. Though there were instances of method invocations, there were not any potential code smells observed through manual inspection.
 
@@ -672,18 +653,40 @@ We feel the following improvements are possible in the tool based on the directi
 \item{Avoiding ‘N’ passes
 \begin{itemize}
 \item At present for each smell detection type, the algorithm scans the same set of files again and again. This would lead to scaling problem when ran on a large module. We have already observed with the results indicating 41 minutes to scan the “chrome” module for each smell detection. This is significant problem with the current algorithm.
-\item Instead a common data structure could be built by a single pass of the entire source code which could be leveraged by each smell detection algorithm. This has the following advantages
+\item {
+Instead a common data structure could be built by a single pass of the entire source code which could be leveraged by each smell detection algorithm. This has the following advantages
+  \begin{enumerate}
+  \item Overall running time for all the algorithm improves significantly.
+  \item Each smell detector does not need to scan the entire source file and build the abstract syntax trees. The common data structure could be leveraged to go to particular location within the source and perform a coarse grained search.
+   \item Some files where there are no toggle method invocations will be ignored by each of the smell detection algorithms. For example, currently if there are ‘N’ files which does not have any toggle method invocation, then each file is parsed and AST is generated and then it is checked further. This overhead time will be saved.
+  \end{enumerate}
+}
 \end{itemize}
 }
 
-\item{User interface
+\item{Automatic detection of dead/stable toggles
 \begin{itemize}
-\item 
-\item
+\item Our approach currently expects list of dead/stable toggles to be provided as an input by the user. But this could be avoided if alternate MSR techniques are implemented to detect the code chunks which involves changing the state of the toggle flags in test and live environment and derive the list of stable/dead toggles in an automated way. However we don’t have any approach in thought as of now.
 \end{itemize}
 }
+\end{enumerate}
 
+\section{Threats to validity}
+\label{Threats to validity}
 
+Though we have done extensive study on google chromium project and came up with classification of code smells, we haven’t done exploratory study on other projects to confirm the presence of toggle smells we defined in this research. There are several reasons for this
+
+\begin{enumerate}
+\item{Not many open source projects are using feature toggles.
+\begin{enumerate}
+\item In our search we found only one more project in the github location named “go.cd” which has feature toggle implementation. But the project was using JRuby and Java as the primary languages.
+\end{enumerate}
+}
+\item {No evolution history of toggle usage
+\begin{enumerate}
+\item Google chrome project has been using feature toggles for more than 5 years and has an evolution history to mine the source code repository. We are yet to find another project which has the evolution and data to mine.
+\end{enumerate}
+}
 
 \end{enumerate}
 
