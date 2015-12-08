@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{enumitem}
+\usepackage{float}
 
 \newcommand{\todo}[1]{\qquad\textcolor{red}{TODO: #1}\PackageWarning{TODO:}{#1!}}
 
@@ -227,7 +228,7 @@ TODO: Faruk
 
 We have listed the code smells that is incurred by the usage of feature toggles on a project. We have given names that define the characteristics of the smell and provided potential causes and consequences for each smell. 
 
-\subsection{TOGGLE\_DEAD (Dead toggles)}
+\subsection{TOGGLE\_DEAD (Dead Toggles)}
 
 \begin{table}[ht]
 \caption{Dead Toggle Smell}
@@ -270,13 +271,14 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  
  \\ \hline
 \end{tabular}
-\label{table:chrome-dir-data}
+\label{table:dead-toggle}
 \end{table}
 
-\begin{table}[ht]
-\caption{Dead Toggle Smell}
+\subsection{TOGGLE\_NEST (Nested Toggles)}
+\begin{table}[!htbp]
+\caption{Nested Toggle Smell}
 \centering
-\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
 \hline\hline
  Description & This smell is observed when one toggle flag is dependent on the state of one or more other toggle flags. \\ \hline
 
@@ -284,11 +286,10 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  \begin{enumerate}
  \item{A variable might be used to store the state of the dependent toggles and will be used as a short circuit while checking the state of the actual feature flag.
  \begin{lstlisting} 
- boolean showF1Menu = ToggleService.isOn(“SHOW_F1_MENU”);
+ boolean s = functionX();
 
- if(showF1Menu && ToggleService.isOn(“SHOW_F1_F11_MENU”) {
- ….
-
+ if(s && functionX()) {
+    ...
  }
  \end{lstlisting}
  }
@@ -302,7 +303,7 @@ Possible Detection Algorithm & This smell can be detected using the following ap
    ...
  }
  \end{lstlisting}
- } 
+ }
  \end{enumerate}
  
  \\ \hline
@@ -322,47 +323,41 @@ Possible Detection Algorithm & This smell can be detected using the following ap
  \end{enumerate}
  
  \\ \hline
+ 
  Consequences & Too many levels of nesting will add to the cost of testing the changes so as to cover all code paths with state on/off.
  \\ \hline
 
- Detection & This smell could be detected using the following approach.\\
- \begin{enumerate}
+ Detection & This smell could be detected using the following approach.
+  \begin{enumerate}
  \item{In order to identify potential positive instances of this smell, the detector could use trained patterns using a mathematical model like BLR(Binary Logistic Regression).}
  \item{Or simple level count could be used to identify the smell. Say for example if the number of nested toggles levels is greater than 2 then there is a possibility of the presence of this code smell.}
  \item{Also the detector can be enhanced to identify that there is a common master toggle used for the most of the nested toggles and could be prevented in identifying false smells.}
  \end{enumerate}
-  
+
  \\ \hline
  
 \end{tabular}
-\label{table:chrome-dir-data}
+\label{table:toggle-nest}
 \end{table}
+\newpage
 
-\subsection{Mix of Compile time and run-time toggles)}
+\subsection{TOGGLE\_MIX (Mix of compile-time and run-time toggles)}
 
-\begin{table}[ht]
+\begin{table}[h]
 \caption{TOGGLE\_MIX}
 \centering
-\begin{tabular}{|p{1.5cm}|p{7cm}|}
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
  \hline\hline
  Description & This smell is observed when the source code uses multiple techniques to manage toggles. One such usage is to combine compile time (\#define, \#ifndef) along with run time toggles.  \\ \hline
 
  Example & 
  \begin{lstlisting}
- //Location: /chrome/app/chrome_main_delegate.cc (Taken from Google chrome)
-#if defined(OS_MACOSX)
-// Mac needs them too for scrollbar related images and for sandbox
-// profiles.
-#if !defined(DISABLE_NACL)
-process_type == switches::kNaClLoaderProcess ||
-#endif
-process_type == switches::kPpapiPluginProcess ||
-process_type == switches::kPpapiBrokerProcess ||
-process_type == switches::kGpuProcess ||
-#endif
-process_type == switches::kRendererProcess ||
-process_type == switches::kUtilityProcess;
-}
+ #if
+ process_type == switches::kNaClLoaderProcess ||
+ #endif
+ process_type == switches::kPpapiPluginProcess ||
+ process_type == switches::kPpapiBrokerProcess
+ #endif
  \end{lstlisting}
  
  \\ \hline
