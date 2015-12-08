@@ -410,6 +410,53 @@ Consequences & Presence of this smell indicates the following possible consequen
 \label{table:chrome-dir-data}
 \end{table}
 
+\subsection{TOGGLE\_SPAGHETTI (Combinatorial Toggles)}
+\begin{table}[!h]
+\caption{TOGGLE\_SPAGHETTI}
+\centering
+\begin{tabular}{|p{1.5cm}|p{6.6cm}|}
+ \hline\hline
+ Description & This smell is observed when the execution of code is controlled by combination of states of several toggles.  \\ \hline
+ 
+ Example & 
+ \begin{lstlisting}
+ if(command_line->HasSwitch(
+     s::kTestLauncherTotalShards) &&
+     command_line->HasSwitch(
+         s::kTestLauncherShardIndex)
+     ){
+ if(!StringToInt(
+      command_line
+      ->GetSwitchValueASCII(
+          s::kTestLauncherTotalShards),
+          &total_shards)){
+      LOG(ERROR) << "Invalid value for " <<    
+      s::kTestLauncherTotalShards;
+      return false;
+  }
+ \end{lstlisting}
+ \\ \hline
+
+ Possible reasons for their presence & 
+ 
+ \begin{enumerate}
+ \item{Mix of canary use cases or A/B testing in toggle block could result in this kind of spaghetti code.}
+ \item{Inconsistency in API’s used to manage toggles and canary use cases.}
+ \item{Presence of more than one API to manage feature flags. Transition from legacy feature toggles to more formal one.}
+ \end{enumerate}
+ \\ \hline
+ 
+ Consequences & If this smell is observed it will have the following consequences in the project
+Cost of testing will increase so as to cover all the code paths.
+Changing existing code base will become non-trivial.
+Code complexity is higher, difficult to understand.
+ \\ \hline
+ 
+\end{tabular}
+\label{table:chrome-dir-data}
+\end{table}
+
+
 \section{Our Approach}
 \label{Methodology and Implimentation}
 We have created a project named "tsd" which stands for toggle smell detector. This project is implemented in Java using the Eclipse Plugin development API. The solution is developed as an eclipse plugin, without user interface support. The hook to initiate the toggle smell detection is implemented using the eclipse plugin API. A toolbar button is placed in the test workbench which triggers the smell detection. This is handled through an event handler callback method which is invoked by the eclipse runtime. The solution will currently detect smells in a C++ project using the eclipse CDT API.\\
@@ -418,11 +465,18 @@ Each smell detector is implemented by a extending an abstract class which provid
 
 Abstract syntax tree~\cite{AbstractSystaxTree} of the eclipse CDT API is utilized for each smell detection algorithm. The visitor designed pattern is applied on each of the source file to detect potential toggle smells. Each detector has an customized implementation of the AST visitor which is tailor made to detect that particular toggle smell. This design gives the flexibility to extend when an user interface is developed for this solution in the future. Typically this gives an option to detect a particular type of toggle smell in a code base by selecting the desired type from the menu. This is similar to how JDeodorant eclipse plugin user interface which has separate menu options to trigger a smell detection on a project or element within a project.
 
+\begin{figure*}
+\includegraphics[height=6in,width=7in]{figure/uml.png}
+\caption{UML Class Diagram.}
+\label{fig:uml}
+\end{figure*}
+
 \section{Implementation Details And Algorithm}
 \label{Details}
 The smell detector requires following prior information to begin with:
 
-\textbf{Toggle method signature or function name:} Without this information the toggle smell detector could not search for the pattern of the method used to check the toggle usage.
+\textbf{Toggle method signature or function name:} Without this information the toggle smell detector could not search for the pattern of the method used to check the toggle usage. Figure~\ref{fig:uml} represents the design of our 
+approach in an UML diagram.
 
 \subsection{Dead Toggle Smell Detector}
 The algorithm to detect the dead and stable toggles remain the same. The detector expects a prior input from the user to provide with the list of toggle flags which became obsolete and stable. 
